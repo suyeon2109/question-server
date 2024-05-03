@@ -1,3 +1,32 @@
 spring:
   application:
     name: question
+
+#  datasource:
+#    driver-class-name: org.h2.Driver
+##    url: 'jdbc:h2:mem:test'   # H2 DB 연결 주소 (In-Memory Mode)
+#    url: 'jdbc:h2:~/developer/database/crunch'    # H2 DB 연결 주소 (Embedded Mode)
+#    username: sa
+#    password:
+
+  datasource:
+    url: jdbc:mariadb://43.202.248.189:3306/square # url: jdbc:mariadb://127.0.0.1:3306/gblite
+    driver-class-name: org.mariadb.jdbc.Driver
+#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    username: admin
+    password: GHLakzktp*04
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+#        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        show_sql: true
