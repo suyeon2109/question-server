@@ -14,7 +14,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class UserUsedQuestion {
+public class MemberUsedQuestion {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	private Long userUsedQuestionSeq;
