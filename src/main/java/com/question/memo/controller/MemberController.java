@@ -20,7 +20,7 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/guests")
-	public CommonResponse<String> saveGuest(@RequestBody GuestCreateDto dto, BindingResult e) {
+	public CommonResponse<String> saveGuest(@Valid @RequestBody GuestCreateDto dto, BindingResult e) {
 		memberService.saveGuest(dto);
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.CREATED.value())
