@@ -68,4 +68,11 @@ public class MemberService {
 				.build());
 		}
 	}
+
+	public void isDuplicatedNickname(String nickname) {
+		Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+		if (byNickname.isPresent()) {
+			throw new IllegalStateException("이미 등록된 닉네임 입니다.");
+		}
+	}
 }

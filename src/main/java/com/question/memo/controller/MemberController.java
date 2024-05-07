@@ -2,6 +2,7 @@ package com.question.memo.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,10 +22,25 @@ public class MemberController {
 
 	@PostMapping("/guests")
 	public CommonResponse<String> saveGuest(@Valid @RequestBody GuestCreateDto dto, BindingResult e) {
-		memberService.saveGuest(dto);
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getDefaultMessage());
+		} else {
+			memberService.saveGuest(dto);
+			CommonResponse<String> response = CommonResponse.<String>builder()
+				.code(HttpStatus.OK.value())
+				.message("게스트로 등록되었습니다.")
+				.build();
+			return response;
+		}
+	}
+
+	@GetMapping("/nickname")
+	public CommonResponse<String> isDuplicatedNickname(String nickname) {
+		memberService.isDuplicatedNickname(nickname);
 		CommonResponse<String> response = CommonResponse.<String>builder()
-			.code(HttpStatus.CREATED.value())
-			.message("게스트로 등록되었습니다.")
+			.code(HttpStatus.OK.value())
+			.message("사용 가능한 닉네임 입니다.")
+			.payload(nickname)
 			.build();
 		return response;
 	}
@@ -36,7 +52,7 @@ public class MemberController {
 		} else {
 			String userId = memberService.signup(dto);
 			CommonResponse<String> response = CommonResponse.<String>builder()
-				.code(HttpStatus.CREATED.value())
+				.code(HttpStatus.OK.value())
 				.message("가입되었습니다.")
 				.payload(userId)
 				.build();
