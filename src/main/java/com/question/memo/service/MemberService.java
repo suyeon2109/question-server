@@ -10,7 +10,6 @@ import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.repository.MemberRepository;
-import com.question.memo.util.AesUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,26 +22,39 @@ public class MemberService {
 		Optional<Member> findByUuid = memberRepository.findByUuid(dto.getUuid());
 		Optional<Member> findByMemberId = memberRepository.findByMemberId(dto.getMemberId());
 
-		if (findByMemberId.isEmpty()) {
-			if (findByUuid.isEmpty()) {
-				memberRepository.save(Member.builder()
-					.memberId(dto.getMemberId())
-					.nickname(dto.getNickname())
-					.guestYn("N")
-					.uuid(dto.getUuid())
-					.build());
-			} else {
-				findByUuid.get().editMemberInfo(MemberEditDto.builder()
-					.memberId(dto.getMemberId())
-					.nickname(dto.getNickname())
-					.guestYn("N")
-					.uuid(dto.getUuid())
-					.build());
-			}
+		if (findByMemberId.isEmpty() && findByUuid.isEmpty()) {
+			createMember(dto);
 			return dto.getMemberId();
-		} else {
-			throw new IllegalStateException("이미 가입된 아이디 입니다.");
 		}
+
+		if (findByUuid.isPresent()) {
+			if (findByUuid.get().getMemberId() != null) {
+				throw new IllegalStateException("이미 가입된 카카오 계정이 존재합니다.");
+			}
+			Member member = findByUuid.get();
+			editMember(dto, member);
+			return dto.getMemberId();
+		}
+
+		throw new IllegalStateException("이미 가입된 아이디 입니다.");
+	}
+
+	private static void editMember(MemberCreateDto dto, Member member) {
+		member.editMemberInfo(MemberEditDto.builder()
+			.memberId(dto.getMemberId())
+			.nickname(dto.getNickname())
+			.guestYn("N")
+			.uuid(dto.getUuid())
+			.build());
+	}
+
+	private void createMember(MemberCreateDto dto) {
+		memberRepository.save(Member.builder()
+			.memberId(dto.getMemberId())
+			.nickname(dto.getNickname())
+			.guestYn("N")
+			.uuid(dto.getUuid())
+			.build());
 	}
 
 	public void saveGuest(GuestCreateDto dto) {
