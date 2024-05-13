@@ -2,6 +2,7 @@ package com.question.memo.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -41,10 +42,9 @@ public class MemberController {
 
 	@GetMapping("/nickname")
 	public CommonResponse<String> isDuplicatedNickname(String nickname) {
-		if (nickname == null || "".equals(nickname)) {
-			throw new IllegalArgumentException("nickname is null");
-		}
-		memberService.isDuplicatedNickname(nickname);
+		String request = Optional.ofNullable(nickname).orElseThrow(() -> new IllegalArgumentException("nickname is null"));
+		memberService.isDuplicatedNickname(request);
+
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.OK.value())
 			.message("사용 가능한 닉네임 입니다.")
