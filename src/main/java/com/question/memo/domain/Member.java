@@ -5,6 +5,7 @@ import static jakarta.persistence.GenerationType.*;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.question.memo.dto.member.MemberEditDto;
 
 import jakarta.persistence.Entity;
@@ -49,6 +50,11 @@ public class Member {
 
 	public void editUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public void editQuestion(Question question) {
+		this.question = question;
+		this.lastQuestionDate = LocalDate.now();
 	}
 
 	public void editQuestion(Question question, LocalDate lastQuestionDate) {
