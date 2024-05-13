@@ -1,7 +1,5 @@
 package com.question.memo.controller;
 
-import java.io.IOException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,7 +19,7 @@ public class ExceptionController extends RuntimeException {
                 .description(request.getDescription(false))
                 .build();
 
-        return new ResponseEntity<ErrorResponse>(response, HttpStatus.CONFLICT);
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -33,7 +31,7 @@ public class ExceptionController extends RuntimeException {
                 .description(request.getDescription(false))
                 .build();
 
-        return new ResponseEntity<ErrorResponse>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
     }
 
     // @ExceptionHandler({PasswordNotEqual.class, MemberNotFound.class})
