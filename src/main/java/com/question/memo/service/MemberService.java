@@ -9,6 +9,8 @@ import com.question.memo.domain.Member;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
+import com.question.memo.dto.member.MemberLoginDto;
+import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,8 @@ public class MemberService {
 		member.editMemberInfo(MemberEditDto.builder()
 			.memberId(dto.getMemberId())
 			.nickname(dto.getNickname())
+			.email(dto.getEmail())
+			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
 			.build());
@@ -52,6 +56,8 @@ public class MemberService {
 		memberRepository.save(Member.builder()
 			.memberId(dto.getMemberId())
 			.nickname(dto.getNickname())
+			.email(dto.getEmail())
+			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
 			.build());
@@ -74,5 +80,17 @@ public class MemberService {
 		if (byNickname.isPresent()) {
 			throw new IllegalStateException("이미 등록된 닉네임 입니다.");
 		}
+	}
+
+	public Member login(MemberLoginDto dto) {
+		Member member = dto.getMemberId() == null ?
+			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
+
+		if (!dto.getUuid().equals(member.getUuid())) {
+			member.editUuid(dto.getUuid());
+		}
+
+		return member;
 	}
 }

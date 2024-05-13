@@ -1,5 +1,8 @@
 package com.question.memo.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,8 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.question.memo.domain.Member;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
+import com.question.memo.dto.member.MemberLoginDto;
 import com.question.memo.service.MemberService;
 import com.question.memo.dto.CommonResponse;
 
@@ -23,7 +28,7 @@ public class MemberController {
 	@PostMapping("/guests")
 	public CommonResponse<String> saveGuest(@Valid @RequestBody GuestCreateDto dto, BindingResult e) {
 		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getDefaultMessage());
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		} else {
 			memberService.saveGuest(dto);
 			CommonResponse<String> response = CommonResponse.<String>builder()
@@ -36,6 +41,9 @@ public class MemberController {
 
 	@GetMapping("/nickname")
 	public CommonResponse<String> isDuplicatedNickname(String nickname) {
+		if (nickname == null || "".equals(nickname)) {
+			throw new IllegalArgumentException("nickname is null");
+		}
 		memberService.isDuplicatedNickname(nickname);
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.OK.value())
@@ -47,14 +55,32 @@ public class MemberController {
 
 	@PostMapping("/members")
 	public CommonResponse<String> signup(@Valid @RequestBody MemberCreateDto dto, BindingResult e) {
-		if(e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getDefaultMessage());
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		} else {
 			String userId = memberService.signup(dto);
 			CommonResponse<String> response = CommonResponse.<String>builder()
 				.code(HttpStatus.OK.value())
 				.message("가입되었습니다.")
 				.payload(userId)
+				.build();
+			return response;
+		}
+	}
+
+	@PostMapping("/login")
+	public CommonResponse<Map> login(@Valid @RequestBody MemberLoginDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		} else {
+			Member member = memberService.login(dto);
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("memberInfo", member);
+
+			CommonResponse<Map> response = CommonResponse.<Map>builder()
+				.code(HttpStatus.OK.value())
+				.message("로그인 되었습니다.")
+				.payload(map)
 				.build();
 			return response;
 		}
