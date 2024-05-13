@@ -10,13 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberCreateDto {
-	@NotNull
+public class MemberLoginDto {
 	private String memberId;
 	@NotNull
-	private String nickname;
-	@NotNull
 	private String uuid;
-	private String email;
-	private String ageRange;
 }

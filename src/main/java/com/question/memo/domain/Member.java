@@ -28,6 +28,8 @@ public class Member {
 	private Long memberSeq;
 	private String memberId;
 	private String nickname;
+	private String email;
+	private String ageRange;
 	private String guestYn;
 	private String uuid;
 
@@ -39,8 +41,14 @@ public class Member {
 	public void editMemberInfo(MemberEditDto dto) {
 		this.memberId = dto.getMemberId();
 		this.nickname = dto.getNickname();
+		this.email = dto.getEmail();
+		this.ageRange = dto.getAgeRange();
 		this.guestYn = dto.getGuestYn();
 		this.uuid = dto.getUuid();
+	}
+
+	public void editUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public void editQuestion(Question question, LocalDate lastQuestionDate) {

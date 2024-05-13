@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.question.memo.dto.ErrorResponse;
+import com.question.memo.exception.MemberNotFoundException;
 
 @ControllerAdvice
 public class ExceptionController extends RuntimeException {
@@ -46,15 +47,15 @@ public class ExceptionController extends RuntimeException {
     //     return new ResponseEntity<ErrorResponse>(response, HttpStatus.UNAUTHORIZED);
     // }
     //
-    // @ExceptionHandler(JwtException.class)
-    // @ApiResponse(responseCode = "460", description ="잘못된 JWT")
-    // public ResponseEntity<ErrorResponse> jwtException(Exception ex, WebRequest request) {
-    //     ErrorResponse response = ErrorResponse.builder()
-    //             .code(460)
-    //             .message(ex.getMessage())
-    //             .description(request.getDescription(false))
-    //             .build();
-    //
-    //     return new ResponseEntity<ErrorResponse>(response, HttpStatus.FORBIDDEN);
-    // }
+    @ExceptionHandler(MemberNotFoundException.class)
+    // @ApiResponse(responseCode = "600", description ="로그인 유저 정보 없음")
+    public ResponseEntity<ErrorResponse> memberNotFoundException(MemberNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+                .code(ex.getStatusCode())
+                .message(ex.getMessage())
+                .description(request.getDescription(false))
+                .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
 }
