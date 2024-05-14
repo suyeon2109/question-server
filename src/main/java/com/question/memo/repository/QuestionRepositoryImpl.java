@@ -3,6 +3,8 @@ package com.question.memo.repository;
 import static com.question.memo.domain.QMemberUsedQuestion.*;
 import static com.question.memo.domain.QQuestion.*;
 
+import java.util.Optional;
+
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,13 +17,16 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
 
 	private final JPAQueryFactory jpaQueryFactory;
 	@Override
-	public Question findByRandom(Long memberSeq) {
-		return jpaQueryFactory.select(question1)
+	public Optional<Question> findByRandom(Long memberSeq) {
+		return Optional.ofNullable(jpaQueryFactory.select(question1)
 			.from(question1)
-			.where(question1.questionSeq.notIn(jpaQueryFactory.select(memberUsedQuestion.question.questionSeq).from(memberUsedQuestion).where(memberSeqEq(memberSeq))))
-			.orderBy(question1.questionOrder.asc().nullsLast(), Expressions.numberTemplate(Double.class, "function('rand')").asc())
+			.where(question1.questionSeq.notIn(jpaQueryFactory.select(memberUsedQuestion.question.questionSeq)
+				.from(memberUsedQuestion)
+				.where(memberSeqEq(memberSeq))))
+			.orderBy(question1.questionOrder.asc().nullsLast(),
+				Expressions.numberTemplate(Double.class, "function('rand')").asc())
 			.limit(1)
-			.fetchOne();
+			.fetchOne());
 	}
 
 	private Predicate memberSeqEq(Long memberSeq) {

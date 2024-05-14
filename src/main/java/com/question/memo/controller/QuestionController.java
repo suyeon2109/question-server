@@ -1,13 +1,11 @@
 package com.question.memo.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.service.QuestionService;
