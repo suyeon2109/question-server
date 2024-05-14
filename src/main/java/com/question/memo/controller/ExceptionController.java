@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.question.memo.dto.ErrorResponse;
+import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
@@ -64,6 +65,18 @@ public class ExceptionController extends RuntimeException {
     @ExceptionHandler(QuestionNotFoundException.class)
     // @ApiResponse(responseCode = "462", description ="질문 정보 없음")
     public ResponseEntity<ErrorResponse> questionNotFoundException(QuestionNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(AnswerNotFoundException.class)
+    // @ApiResponse(responseCode = "463", description ="답변 리스트 없음")
+    public ResponseEntity<ErrorResponse> answerNotFoundException(AnswerNotFoundException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
             .message(ex.getMessage())
