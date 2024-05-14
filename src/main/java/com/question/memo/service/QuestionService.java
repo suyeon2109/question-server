@@ -11,7 +11,7 @@ import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.domain.Question;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
-import com.question.memo.exception.QuestionNotFoundException;
+import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.repository.MemberRepository;
 import com.question.memo.repository.MemberUsedQuestionRepository;
 import com.question.memo.repository.QuestionRepository;
@@ -43,7 +43,7 @@ public class QuestionService {
 				.question(q.getQuestion())
 				.questionOrder(q.getQuestionOrder())
 				.build())
-			.orElseThrow(QuestionNotFoundException::new);
+			.orElseThrow(QuestionNotRemainException::new);
 	}
 	private void saveUsedQuestion(Member member) {
 		memberUsedQuestionRepository.save(MemberUsedQuestion.builder()
