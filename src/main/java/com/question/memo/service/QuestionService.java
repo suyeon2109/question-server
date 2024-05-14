@@ -1,6 +1,7 @@
 package com.question.memo.service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.domain.Question;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
+import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.repository.MemberRepository;
 import com.question.memo.repository.MemberUsedQuestionRepository;
 import com.question.memo.repository.QuestionRepository;
@@ -26,21 +28,24 @@ public class QuestionService {
 
 	public QuestionResponseDto getQuestion(String memberId) {
 		Member member = memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
-			Question question = questionRepository.findByRandom(member.getMemberSeq());
-			member.editQuestion(question);
-			saveMemberUsedQuestion(member);
+			Optional<Question> question = questionRepository.findByRandom(member.getMemberSeq());
+			question.ifPresent(q -> {
+				member.editQuestion(q);
+				saveUsedQuestion(member);
+			});
 		}
 
-		Question question = member.getQuestion();
-		return QuestionResponseDto.builder()
-			.questionSeq(question.getQuestionSeq())
-			.question(question.getQuestion())
-			.questionOrder(question.getQuestionOrder())
-			.build();
+		return Optional.ofNullable(member.getQuestion())
+			.map(q -> QuestionResponseDto.builder()
+				.questionSeq(q.getQuestionSeq())
+				.question(q.getQuestion())
+				.questionOrder(q.getQuestionOrder())
+				.build())
+			.orElseThrow(QuestionNotFoundException::new);
 	}
-
-	private void saveMemberUsedQuestion(Member member) {
+	private void saveUsedQuestion(Member member) {
 		memberUsedQuestionRepository.save(MemberUsedQuestion.builder()
 			.usedDate(LocalDate.now())
 			.member(member)

@@ -8,6 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.MemberNotFoundException;
+import com.question.memo.exception.QuestionNotFoundException;
 
 @ControllerAdvice
 public class ExceptionController extends RuntimeException {
@@ -35,18 +36,6 @@ public class ExceptionController extends RuntimeException {
         return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
     }
 
-    // @ExceptionHandler({PasswordNotEqual.class, MemberNotFound.class})
-    // @ApiResponse(responseCode = "401", description ="인가되지 않은 사용자")
-    // public ResponseEntity<ErrorResponse> memberNotFoundException(Exception ex, WebRequest request) {
-    //     ErrorResponse response = ErrorResponse.builder()
-    //             .code(HttpStatus.UNAUTHORIZED.value())
-    //             .message(ex.getMessage())
-    //             .description(request.getDescription(false))
-    //             .build();
-    //
-    //     return new ResponseEntity<ErrorResponse>(response, HttpStatus.UNAUTHORIZED);
-    // }
-    //
     @ExceptionHandler(MemberNotFoundException.class)
     // @ApiResponse(responseCode = "600", description ="로그인 유저 정보 없음")
     public ResponseEntity<ErrorResponse> memberNotFoundException(MemberNotFoundException ex, WebRequest request) {
@@ -55,6 +44,18 @@ public class ExceptionController extends RuntimeException {
                 .message(ex.getMessage())
                 .description(request.getDescription(false))
                 .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(QuestionNotFoundException.class)
+    // @ApiResponse(responseCode = "700", description ="남은 질문 없음")
+    public ResponseEntity<ErrorResponse> questionNotFoundException(QuestionNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
 
         return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
     }
