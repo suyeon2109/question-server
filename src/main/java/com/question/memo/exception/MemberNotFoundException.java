@@ -7,6 +7,6 @@ public class MemberNotFoundException extends RuntimeException {
 		super(message);
 	}
 	public int getStatusCode() {
-		return 600;
+		return 460;
 	}
 }

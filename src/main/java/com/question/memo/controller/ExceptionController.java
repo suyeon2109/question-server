@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
+import com.question.memo.exception.QuestionNotRemainException;
 
 @ControllerAdvice
 public class ExceptionController extends RuntimeException {
@@ -37,7 +38,7 @@ public class ExceptionController extends RuntimeException {
     }
 
     @ExceptionHandler(MemberNotFoundException.class)
-    // @ApiResponse(responseCode = "600", description ="로그인 유저 정보 없음")
+    // @ApiResponse(responseCode = "460", description ="로그인 유저 정보 없음")
     public ResponseEntity<ErrorResponse> memberNotFoundException(MemberNotFoundException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
                 .code(ex.getStatusCode())
@@ -48,8 +49,20 @@ public class ExceptionController extends RuntimeException {
         return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
     }
 
+    @ExceptionHandler(QuestionNotRemainException.class)
+    // @ApiResponse(responseCode = "461", description ="남은 질문 없음")
+    public ResponseEntity<ErrorResponse> questionNotRemainException(QuestionNotRemainException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
     @ExceptionHandler(QuestionNotFoundException.class)
-    // @ApiResponse(responseCode = "700", description ="남은 질문 없음")
+    // @ApiResponse(responseCode = "462", description ="질문 정보 없음")
     public ResponseEntity<ErrorResponse> questionNotFoundException(QuestionNotFoundException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())

@@ -16,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuestionController {
 	private final QuestionService questionService;
-	@GetMapping("/question")
+	@GetMapping("/questions")
 	public CommonResponse<QuestionResponseDto> getQuestion(String memberId) {
-		String request = Optional.ofNullable(memberId).orElseThrow(() -> new IllegalArgumentException("memberId is null"));
+		String request = Optional.ofNullable(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("memberId is null"));
 		QuestionResponseDto question = questionService.getQuestion(request);
 
 		CommonResponse<QuestionResponseDto> response = CommonResponse.<QuestionResponseDto>builder()

@@ -40,7 +40,7 @@ public class MemberController {
 		}
 	}
 
-	@GetMapping("/nickname")
+	@GetMapping("/nicknames")
 	public CommonResponse<String> isDuplicatedNickname(String nickname) {
 		String request = Optional.ofNullable(nickname).orElseThrow(() -> new IllegalArgumentException("nickname is null"));
 		memberService.isDuplicatedNickname(request);
