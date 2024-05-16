@@ -75,12 +75,18 @@ public class AnswerService {
 
 	public AnswerResponseDto getAnswer(Long answerSeq) {
 		Answer answer = answerRepository.findById(answerSeq).orElseThrow(AnswerNotFoundException::new);
+		Member member = memberRepository.findById(answer.getMember().getMemberSeq())
+			.orElseThrow(MemberNotFoundException::new);
+
 		return AnswerResponseDto.builder()
 			.answerSeq(answerSeq)
 			.answer(answer.getAnswer())
 			.answerDate(answer.getAnswerDate())
 			.questionSeq(answer.getQuestion().getQuestionSeq())
 			.question(answer.getQuestion().getQuestion())
+			.nickname(member.getNickname())
+			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
 			.build();
 	}
+
 }

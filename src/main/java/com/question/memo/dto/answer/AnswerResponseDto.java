@@ -13,4 +13,6 @@ public class AnswerResponseDto {
 	private LocalDateTime answerDate;
 	private Long questionSeq;
 	private String question;
+	private String nickname;
+	private String badge;
 }
