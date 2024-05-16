@@ -15,6 +15,7 @@ import com.question.memo.domain.Member;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberLoginDto;
+import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.service.MemberService;
 import com.question.memo.dto.CommonResponse;
 
@@ -73,7 +74,7 @@ public class MemberController {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		} else {
-			Member member = memberService.login(dto);
+			MemberResponseDto member = memberService.login(dto);
 			HashMap<String, Object> map = new HashMap<>();
 			map.put("memberInfo", member);
 

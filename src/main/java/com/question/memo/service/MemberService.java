@@ -10,6 +10,7 @@ import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.dto.member.MemberLoginDto;
+import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.MemberRepository;
 
@@ -82,7 +83,7 @@ public class MemberService {
 		}
 	}
 
-	public Member login(MemberLoginDto dto) {
+	public MemberResponseDto login(MemberLoginDto dto) {
 		Member member = dto.getMemberId() == null ?
 			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
 			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
@@ -91,6 +92,18 @@ public class MemberService {
 			member.editUuid(dto.getUuid());
 		}
 
-		return member;
+		return MemberResponseDto.builder()
+			.memberSeq(member.getMemberSeq())
+			.memberId(member.getMemberId())
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.ageRange(member.getAgeRange())
+			.guestYn(member.getGuestYn())
+			.uuid(member.getUuid())
+			.last_question_id(member.getQuestion() == null ? null : member.getQuestion().getQuestionSeq())
+			.lastQuestionDate(member.getLastQuestionDate())
+			.badge_id(member.getBadge() == null ? null : member.getBadge().getBadgeSeq())
+			.badgeDate(member.getBadgeDate())
+			.build();
 	}
 }
