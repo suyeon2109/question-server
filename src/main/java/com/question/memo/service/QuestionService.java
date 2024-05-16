@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.domain.Question;
+import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
@@ -26,11 +27,17 @@ public class QuestionService {
 	private final QuestionRepository questionRepository;
 	private final MemberUsedQuestionRepository memberUsedQuestionRepository;
 
-	public QuestionResponseDto getQuestion(String memberId) {
-		Member member = memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+	public QuestionResponseDto getQuestion(QuestionRequestDto dto) {
+		Member member = dto.getMemberId() == null ?
+			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
+
+		if (!dto.getUuid().equals(member.getUuid())) {
+			member.editUuid(dto.getUuid());
+		}
 
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
-			Optional<Question> question = questionRepository.findByRandom(member.getMemberSeq());
+			Optional<Question> question = questionRepository.findByRandom(member);
 			question.ifPresent(q -> {
 				member.editQuestion(q);
 				saveUsedQuestion(member);

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.question.memo.domain.Answer;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.Question;
+import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.exception.AnswerNotFoundException;
@@ -28,22 +29,23 @@ public class AnswerService {
 	private final AnswerRepository answerRepository;
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
-	public void saveAnswer(AnswerRequestDto request) {
-		Member member = memberRepository.findByMemberId(request.getMemberId())
-			.orElseThrow(MemberNotFoundException::new);
-		Question question = questionRepository.findById(request.getQuestionSeq())
+	public void saveAnswer(AnswerRequestDto dto) {
+		Member member = getMember(dto.getMemberId(), dto.getUuid());
+
+		Question question = questionRepository.findById(dto.getQuestionSeq())
 			.orElseThrow(QuestionNotFoundException::new);
 
 		answerRepository.save(Answer.builder()
-			.answer(request.getAnswer())
+			.answer(dto.getAnswer())
 			.answerDate(LocalDateTime.now())
 			.member(member)
 			.question(question)
 			.build());
 	}
 
-	public List<AnswerResponseDto> getAnswerList(String memberId) {
-		Member member = memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+	public List<AnswerResponseDto> getAnswerList(AnswerListRequestDto dto) {
+		Member member = getMember(dto.getMemberId(), dto.getUuid());
+
 		List<Answer> list = answerRepository.findByMember(member).orElseThrow(AnswerNotFoundException::new);
 		List<AnswerResponseDto> response = new ArrayList<>();
 
@@ -52,8 +54,6 @@ public class AnswerService {
 				.answerSeq(a.getAnswerSeq())
 				.answer(a.getAnswer())
 				.answerDate(a.getAnswerDate())
-				.memberId(memberId)
-				.nickname(member.getNickname())
 				.questionSeq(a.getQuestion().getQuestionSeq())
 				.question(a.getQuestion().getQuestion())
 				.build();
@@ -62,14 +62,23 @@ public class AnswerService {
 		return response;
 	}
 
+	private Member getMember(String memberId, String uuid) {
+		Member member = memberId == null ?
+			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+
+		if (!uuid.equals(member.getUuid())) {
+			member.editUuid(uuid);
+		}
+		return member;
+	}
+
 	public AnswerResponseDto getAnswer(Long answerSeq) {
 		Answer answer = answerRepository.findById(answerSeq).orElseThrow(AnswerNotFoundException::new);
 		return AnswerResponseDto.builder()
 			.answerSeq(answerSeq)
 			.answer(answer.getAnswer())
 			.answerDate(answer.getAnswerDate())
-			.memberId(answer.getMember().getMemberId())
-			.nickname(answer.getMember().getNickname())
 			.questionSeq(answer.getQuestion().getQuestionSeq())
 			.question(answer.getQuestion().getQuestion())
 			.build();
