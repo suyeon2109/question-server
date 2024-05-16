@@ -33,6 +33,7 @@ public class Member {
 	private String ageRange;
 	private String guestYn;
 	private String uuid;
+	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "last_question_id", referencedColumnName = "question_seq")
@@ -51,6 +52,7 @@ public class Member {
 		this.ageRange = dto.getAgeRange();
 		this.guestYn = dto.getGuestYn();
 		this.uuid = dto.getUuid();
+		this.createdAt = dto.getCreatedAt();
 	}
 
 	public void editUuid(String uuid) {

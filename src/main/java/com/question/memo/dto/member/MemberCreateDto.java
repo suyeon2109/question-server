@@ -1,5 +1,7 @@
 package com.question.memo.dto.member;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +21,5 @@ public class MemberCreateDto {
 	private String uuid;
 	private String email;
 	private String ageRange;
+	private LocalDateTime createdAt;
 }
