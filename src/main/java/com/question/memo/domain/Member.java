@@ -4,8 +4,8 @@ import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.question.memo.dto.member.MemberEditDto;
 
 import jakarta.persistence.Entity;
@@ -39,6 +39,11 @@ public class Member {
 	private Question question;
 	private LocalDate lastQuestionDate;
 
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "badge_id", referencedColumnName = "badge_seq")
+	private Badge badge;
+	private LocalDateTime badgeDate;
+
 	public void editMemberInfo(MemberEditDto dto) {
 		this.memberId = dto.getMemberId();
 		this.nickname = dto.getNickname();
@@ -55,10 +60,5 @@ public class Member {
 	public void editQuestion(Question question) {
 		this.question = question;
 		this.lastQuestionDate = LocalDate.now();
-	}
-
-	public void editQuestion(Question question, LocalDate lastQuestionDate) {
-		this.question = question;
-		this.lastQuestionDate = lastQuestionDate;
 	}
 }
