@@ -102,7 +102,7 @@ public class MemberService {
 			.uuid(member.getUuid())
 			.last_question_id(member.getQuestion() == null ? null : member.getQuestion().getQuestionSeq())
 			.lastQuestionDate(member.getLastQuestionDate())
-			.badge_id(member.getBadge() == null ? null : member.getBadge().getBadgeSeq())
+			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
 			.badgeDate(member.getBadgeDate())
 			.build();
 	}

@@ -18,6 +18,6 @@ public class MemberResponseDto {
 	private String uuid;
 	private Long last_question_id;
 	private LocalDate lastQuestionDate;
-	private Long badge_id;
+	private String badge;
 	private LocalDateTime badgeDate;
 }
