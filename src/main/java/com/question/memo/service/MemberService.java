@@ -9,7 +9,7 @@ import com.question.memo.domain.Member;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
-import com.question.memo.dto.member.MemberLoginDto;
+import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.MemberRepository;
@@ -83,7 +83,7 @@ public class MemberService {
 		}
 	}
 
-	public MemberResponseDto login(MemberLoginDto dto) {
+	public MemberResponseDto getMemberInfo(MemberRequestDto dto) {
 		Member member = dto.getMemberId() == null ?
 			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
 			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);

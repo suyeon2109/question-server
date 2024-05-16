@@ -11,8 +11,6 @@ public class AnswerResponseDto {
 	private Long answerSeq;
 	private String answer;
 	private LocalDateTime answerDate;
-	private String memberId;
-	private String nickname;
 	private Long questionSeq;
 	private String question;
 }

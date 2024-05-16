@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.question.memo.domain.Answer;
 import com.question.memo.dto.CommonResponse;
+import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.service.AnswerService;
@@ -42,9 +43,11 @@ public class AnswerController {
 	}
 
 	@GetMapping
-	public CommonResponse<List<AnswerResponseDto>> getAnswerList(String memberId) {
-		String request = Optional.ofNullable(memberId).orElseThrow(() -> new IllegalArgumentException("memberId is null"));
-		List<AnswerResponseDto> list = answerService.getAnswerList(request);
+	public CommonResponse<List<AnswerResponseDto>> getAnswerList(@Valid AnswerListRequestDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		}
+		List<AnswerResponseDto> list = answerService.getAnswerList(dto);
 
 		CommonResponse<List<AnswerResponseDto>> response = CommonResponse.<List<AnswerResponseDto>>builder()
 			.code(HttpStatus.OK.value())

@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.question.memo.domain.Member;
+import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
-import com.question.memo.dto.member.MemberLoginDto;
+import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.service.MemberService;
-import com.question.memo.dto.CommonResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,17 +69,35 @@ public class MemberController {
 	}
 
 	@PostMapping("/login")
-	public CommonResponse<Map> login(@Valid @RequestBody MemberLoginDto dto, BindingResult e) {
+	public CommonResponse<Map> login(@Valid @RequestBody MemberRequestDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		} else {
-			MemberResponseDto member = memberService.login(dto);
+			MemberResponseDto member = memberService.getMemberInfo(dto);
 			HashMap<String, Object> map = new HashMap<>();
 			map.put("memberInfo", member);
 
 			CommonResponse<Map> response = CommonResponse.<Map>builder()
 				.code(HttpStatus.OK.value())
 				.message("로그인 되었습니다.")
+				.payload(map)
+				.build();
+			return response;
+		}
+	}
+
+	@GetMapping("/memberInfo")
+	public CommonResponse<Map> getMemberInfo(@Valid MemberRequestDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		} else {
+			MemberResponseDto member = memberService.getMemberInfo(dto);
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("memberInfo", member);
+
+			CommonResponse<Map> response = CommonResponse.<Map>builder()
+				.code(HttpStatus.OK.value())
+				.message("회원정보 조회")
 				.payload(map)
 				.build();
 			return response;

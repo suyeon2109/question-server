@@ -6,12 +6,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AnswerRequestDto {
+public class AnswerListRequestDto {
 	private String memberId;
 	@NotNull
 	private String uuid;
-	@NotNull
-	private Long questionSeq;
-	@NotNull
-	private String answer;
 }
