@@ -30,4 +30,8 @@ public class MemberReceivedBadge {
 	private Member member;
 
 	private LocalDateTime receivedAt;
+
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "badge_seq")
+	private Badge badge;
 }

@@ -16,4 +16,6 @@ public class Badge {
 	@Column(name = "badge_seq")
 	private Long badgeSeq;
 	private String badge;
+	private String description;
+	private Long badgeOrder;
 }

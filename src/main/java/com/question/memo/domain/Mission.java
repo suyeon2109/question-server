@@ -14,5 +14,6 @@ public class Mission {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long missionSeq;
 	private String mission;
-	private String missionOrder;
+	private String description;
+	private Long missionOrder;
 }

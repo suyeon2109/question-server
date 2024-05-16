@@ -10,7 +10,7 @@ spring:
 #    password:
 
   datasource:
-    url: jdbc:mariadb://43.202.248.189:3306/square # url: jdbc:mariadb://127.0.0.1:3306/gblite
+    url: jdbc:mariadb://43.202.248.189:3306/square
     driver-class-name: org.mariadb.jdbc.Driver
 #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: admin

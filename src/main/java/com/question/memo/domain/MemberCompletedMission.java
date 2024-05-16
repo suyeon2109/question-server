@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class MemberCompletedMission {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	private Long memberCompleteQuestionSeq;
+	private Long memberCompletedMissionSeq;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "member_seq")
