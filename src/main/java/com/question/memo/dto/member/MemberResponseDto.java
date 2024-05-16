@@ -20,4 +20,5 @@ public class MemberResponseDto {
 	private LocalDate lastQuestionDate;
 	private String badge;
 	private LocalDateTime badgeDate;
+	private LocalDateTime createdAt;
 }

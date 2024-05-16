@@ -1,5 +1,6 @@
 package com.question.memo.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -50,6 +51,7 @@ public class MemberService {
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
+			.createdAt(dto.getCreatedAt())
 			.build());
 	}
 
@@ -61,6 +63,7 @@ public class MemberService {
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
+			.createdAt(LocalDateTime.now())
 			.build());
 	}
 
@@ -72,6 +75,7 @@ public class MemberService {
 			memberRepository.save(Member.builder()
 				.guestYn("Y")
 				.uuid(dto.getUuid())
+				.createdAt(LocalDateTime.now())
 				.build());
 		}
 	}
@@ -100,6 +104,7 @@ public class MemberService {
 			.ageRange(member.getAgeRange())
 			.guestYn(member.getGuestYn())
 			.uuid(member.getUuid())
+			.createdAt(member.getCreatedAt())
 			.last_question_id(member.getQuestion() == null ? null : member.getQuestion().getQuestionSeq())
 			.lastQuestionDate(member.getLastQuestionDate())
 			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
