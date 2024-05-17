@@ -12,16 +12,22 @@ import lombok.Getter;
 public class MissionResponseDto {
 	private Long missionSeq;
 	private String mission;
-	private String description;
+	private String missionDescription;
+	private Long badgeSeq;
+	private String badge;
+	private String badgeDescription;
 	private String completedYn;
 	private LocalDateTime completedAt;
 
 	@QueryProjection
-	public MissionResponseDto(Long missionSeq, String mission, String description, String completedYn,
-		LocalDateTime completedAt) {
+	public MissionResponseDto(Long missionSeq, String mission, String missionDescription, Long badgeSeq, String badge,
+		String badgeDescription, String completedYn, LocalDateTime completedAt) {
 		this.missionSeq = missionSeq;
 		this.mission = mission;
-		this.description = description;
+		this.missionDescription = missionDescription;
+		this.badgeSeq = badgeSeq;
+		this.badge = badge;
+		this.badgeDescription = badgeDescription;
 		this.completedYn = completedYn;
 		this.completedAt = completedAt;
 	}

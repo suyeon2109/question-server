@@ -8,7 +8,9 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.AnswerNotFoundException;
+import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
+import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.exception.SignUpRequiredException;
@@ -90,6 +92,30 @@ public class ExceptionController extends RuntimeException {
     @ExceptionHandler(SignUpRequiredException.class)
     // @ApiResponse(responseCode = "464", description ="회원가입 필요")
     public ResponseEntity<ErrorResponse> signUpRequiredException(SignUpRequiredException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(MissionNotFoundException.class)
+    // @ApiResponse(responseCode = "465", description ="미션 정보 없음")
+    public ResponseEntity<ErrorResponse> missionNotFoundException(MissionNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(BadgeNotFoundException.class)
+    // @ApiResponse(responseCode = "466", description ="뱃지 정보 없음")
+    public ResponseEntity<ErrorResponse> BadgeNotFoundException(BadgeNotFoundException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
             .message(ex.getMessage())

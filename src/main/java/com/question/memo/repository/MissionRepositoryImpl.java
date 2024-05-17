@@ -1,7 +1,9 @@
 package com.question.memo.repository;
 
+import static com.question.memo.domain.QBadge.*;
 import static com.question.memo.domain.QMemberCompletedMission.*;
 import static com.question.memo.domain.QMission.*;
+import static com.question.memo.domain.QMissionBadge.*;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class MissionRepositoryImpl implements MissionRepositoryCustom{
 	public List<MissionResponseDto> getMissionList(Long memberSeq) {
 		return jpaQueryFactory.select(
 				new QMissionResponseDto(mission1.missionSeq, mission1.mission, mission1.description,
+					badge1.badgeSeq, badge1.badge, badge1.description,
 					new CaseBuilder().when(memberCompletedMission.mission.missionSeq.isNotNull())
 						.then("Y")
 						.otherwise("N")
@@ -27,6 +30,11 @@ public class MissionRepositoryImpl implements MissionRepositoryCustom{
 			.leftJoin(memberCompletedMission)
 			.on(mission1.missionSeq.eq(memberCompletedMission.mission.missionSeq)
 				.and(memberCompletedMission.member.memberSeq.eq(memberSeq)))
+			.leftJoin(missionBadge)
+			.on(mission1.missionSeq.eq(missionBadge.mission.missionSeq))
+			.leftJoin(badge1)
+			.on(missionBadge.badge.badgeSeq.eq(badge1.badgeSeq))
+			.orderBy(mission1.missionOrder.asc())
 			.fetch();
 	}
 }
