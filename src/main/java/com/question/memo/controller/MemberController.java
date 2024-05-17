@@ -112,9 +112,9 @@ public class MemberController {
 		String request = Optional.ofNullable(uuid).orElseThrow(() -> new IllegalArgumentException("uuid is null"));
 
 		AnswerResponseDto answer = answerService.getFirstAnswer(request);
-		Long expiredAfter = answerService.checkGuestRemainDays(answer);
+		Long remainDays = answerService.checkGuestRemainDays(answer);
 		Map<String, Object> map = new HashMap<>();
-		map.put("expiredAfter", expiredAfter);
+		map.put("remainDays", remainDays);
 
 		CommonResponse<Map<String, Object>> response = CommonResponse.<Map<String, Object>>builder()
 			.code(HttpStatus.OK.value())
