@@ -18,6 +18,7 @@ import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
+import com.question.memo.exception.SignUpRequiredException;
 import com.question.memo.repository.AnswerRepository;
 import com.question.memo.repository.MemberRepository;
 import com.question.memo.repository.QuestionRepository;
@@ -95,16 +96,26 @@ public class AnswerService {
 	}
 
 	public Long checkGuestRemainDays(AnswerResponseDto answer) {
-		if (answer != null &&
-			(answer.getAnswerDate().toLocalDate().isEqual(LocalDate.now().minusDays(3)) ||
-				answer.getAnswerDate().toLocalDate().isBefore(LocalDate.now().minusDays(3)))) {
-
-			Long daysDiff = ChronoUnit.DAYS.between(answer.getAnswerDate().toLocalDate(), LocalDate.now());
-			Long remainDays = daysDiff > 5L ? 0L : 5L - daysDiff;
-			return remainDays;
-		} else {
+		if (answer == null || !isAnswerWithinLastThreeDays(answer)) {
 			return null;
 		}
+
+		Long daysDiff = ChronoUnit.DAYS.between(answer.getAnswerDate().toLocalDate(), LocalDate.now());
+		if (daysDiff >= 5L) {
+			throw new SignUpRequiredException();
+		}
+
+		return calculateRemainingDays(daysDiff);
+	}
+
+	private boolean isAnswerWithinLastThreeDays(AnswerResponseDto answer) {
+		LocalDate answerDate = answer.getAnswerDate().toLocalDate();
+		LocalDate threeDaysAgo = LocalDate.now().minusDays(3);
+		return answerDate.isEqual(threeDaysAgo) || answerDate.isBefore(threeDaysAgo);
+	}
+
+	private Long calculateRemainingDays(Long daysDiff) {
+		return Math.max(0L, 5L - daysDiff);
 	}
 
 	public AnswerResponseDto getFirstAnswer(@Valid String uuid) {

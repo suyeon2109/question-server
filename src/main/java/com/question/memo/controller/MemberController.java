@@ -108,7 +108,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/members/remainDays")
-	public CommonResponse<Map<String, Object>> checkGuestRemainDays(@Valid String uuid) {
+	public CommonResponse<Map<String, Object>> checkGuestRemainDays(String uuid) {
 		String request = Optional.ofNullable(uuid).orElseThrow(() -> new IllegalArgumentException("uuid is null"));
 
 		AnswerResponseDto answer = answerService.getFirstAnswer(request);

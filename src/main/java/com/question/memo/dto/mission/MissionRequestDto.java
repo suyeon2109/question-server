@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MissionRequestDto {
-	@NotNull
 	private String memberId;
 	@NotNull
 	private String uuid;
