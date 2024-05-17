@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.BadgeNotFoundException;
+import com.question.memo.exception.BadgeNotReceivedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
@@ -115,7 +116,19 @@ public class ExceptionController extends RuntimeException {
 
     @ExceptionHandler(BadgeNotFoundException.class)
     // @ApiResponse(responseCode = "466", description ="뱃지 정보 없음")
-    public ResponseEntity<ErrorResponse> BadgeNotFoundException(BadgeNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> badgeNotFoundException(BadgeNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(BadgeNotReceivedException.class)
+    // @ApiResponse(responseCode = "467", description ="뱃지 미획득")
+    public ResponseEntity<ErrorResponse> badgeNotReceivedException(BadgeNotReceivedException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
             .message(ex.getMessage())

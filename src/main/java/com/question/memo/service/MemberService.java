@@ -13,7 +13,7 @@ import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
-import com.question.memo.repository.MemberRepository;
+import com.question.memo.repository.member.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 

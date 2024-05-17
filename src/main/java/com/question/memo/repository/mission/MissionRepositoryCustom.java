@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.mission;
 
 import java.util.List;
 

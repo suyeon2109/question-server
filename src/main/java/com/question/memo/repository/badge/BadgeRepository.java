@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.badge;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

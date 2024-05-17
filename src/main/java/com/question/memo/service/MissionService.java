@@ -15,10 +15,10 @@ import com.question.memo.dto.mission.MissionResponseDto;
 import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.MissionNotFoundException;
-import com.question.memo.repository.BadgeRepository;
-import com.question.memo.repository.MemberRepository;
-import com.question.memo.repository.MissionBadgeRepository;
-import com.question.memo.repository.MissionRepository;
+import com.question.memo.repository.badge.BadgeRepository;
+import com.question.memo.repository.member.MemberRepository;
+import com.question.memo.repository.mission.MissionBadgeRepository;
+import com.question.memo.repository.mission.MissionRepository;
 
 import lombok.RequiredArgsConstructor;
 
