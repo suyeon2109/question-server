@@ -1,6 +1,8 @@
 package com.question.memo.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import com.question.memo.repository.AnswerRepository;
 import com.question.memo.repository.MemberRepository;
 import com.question.memo.repository.QuestionRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -45,8 +48,8 @@ public class AnswerService {
 
 	public List<AnswerResponseDto> getAnswerList(AnswerListRequestDto dto) {
 		Member member = getMember(dto.getMemberId(), dto.getUuid());
-
 		List<Answer> list = answerRepository.findByMember(member).orElseThrow(AnswerNotFoundException::new);
+
 		List<AnswerResponseDto> response = new ArrayList<>();
 
 		list.forEach(a -> {
@@ -56,6 +59,8 @@ public class AnswerService {
 				.answerDate(a.getAnswerDate())
 				.questionSeq(a.getQuestion().getQuestionSeq())
 				.question(a.getQuestion().getQuestion())
+				.nickname(a.getMember().getNickname())
+				.badge(a.getMember().getBadge().getBadge())
 				.build();
 			response.add(build);
 		});
@@ -82,11 +87,39 @@ public class AnswerService {
 			.answerSeq(answerSeq)
 			.answer(answer.getAnswer())
 			.answerDate(answer.getAnswerDate())
-			.questionSeq(answer.getQuestion().getQuestionSeq())
-			.question(answer.getQuestion().getQuestion())
+			.questionSeq(answer.getQuestion() == null ? null : answer.getQuestion().getQuestionSeq())
+			.question(answer.getQuestion() == null ? null : answer.getQuestion().getQuestion())
 			.nickname(member.getNickname())
 			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
 			.build();
 	}
 
+	public Long checkGuestRemainDays(AnswerResponseDto answer) {
+		if (answer != null &&
+			(answer.getAnswerDate().toLocalDate().isEqual(LocalDate.now().minusDays(3)) ||
+				answer.getAnswerDate().toLocalDate().isBefore(LocalDate.now().minusDays(3)))) {
+
+			Long daysDiff = ChronoUnit.DAYS.between(answer.getAnswerDate().toLocalDate(), LocalDate.now());
+			Long remainDays = daysDiff > 5L ? 0L : 5L - daysDiff;
+			return remainDays;
+		} else {
+			return null;
+		}
+	}
+
+	public AnswerResponseDto getFirstAnswer(@Valid String uuid) {
+		Member member = getMember(null, uuid);
+		Answer answer = answerRepository.findFirstByMemberOrderByAnswerDateAsc(member)
+			.orElseThrow(AnswerNotFoundException::new);
+
+		return AnswerResponseDto.builder()
+			.answerSeq(answer.getAnswerSeq())
+			.answer(answer.getAnswer())
+			.answerDate(answer.getAnswerDate())
+			.questionSeq(answer.getQuestion() == null ? null : answer.getQuestion().getQuestionSeq())
+			.question(answer.getQuestion() == null ? null : answer.getQuestion().getQuestion())
+			.nickname(member.getNickname())
+			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
+			.build();
+	}
 }

@@ -10,4 +10,6 @@ import com.question.memo.domain.Member;
 
 public interface AnswerRepository extends JpaRepository<Answer,Long> {
 	Optional<List<Answer>> findByMember(Member member);
+
+	Optional<Answer> findFirstByMemberOrderByAnswerDateAsc(Member member);
 }
