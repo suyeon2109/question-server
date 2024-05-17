@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.answer;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.question;
 
 import static com.question.memo.domain.QMemberUsedQuestion.*;
 import static com.question.memo.domain.QQuestion.*;
@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.Question;
+import com.question.memo.repository.question.QuestionRepositoryCustom;
 
 import lombok.RequiredArgsConstructor;
 

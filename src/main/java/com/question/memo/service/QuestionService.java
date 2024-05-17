@@ -14,9 +14,9 @@ import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
-import com.question.memo.repository.MemberRepository;
-import com.question.memo.repository.MemberUsedQuestionRepository;
-import com.question.memo.repository.QuestionRepository;
+import com.question.memo.repository.member.MemberRepository;
+import com.question.memo.repository.member.MemberUsedQuestionRepository;
+import com.question.memo.repository.question.QuestionRepository;
 
 import lombok.RequiredArgsConstructor;
 

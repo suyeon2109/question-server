@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.member;
 
 import java.util.Optional;
 

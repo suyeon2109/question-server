@@ -33,14 +33,13 @@ public class MemberController {
 	public CommonResponse<String> saveGuest(@Valid @RequestBody GuestCreateDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		} else {
-			memberService.saveGuest(dto);
-			CommonResponse<String> response = CommonResponse.<String>builder()
-				.code(HttpStatus.OK.value())
-				.message("게스트로 등록되었습니다.")
-				.build();
-			return response;
 		}
+		memberService.saveGuest(dto);
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("게스트로 등록되었습니다.")
+			.build();
+		return response;
 	}
 
 	@GetMapping("/nicknames")
@@ -60,51 +59,48 @@ public class MemberController {
 	public CommonResponse<String> signup(@Valid @RequestBody MemberCreateDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		} else {
-			String userId = memberService.signup(dto);
-			CommonResponse<String> response = CommonResponse.<String>builder()
-				.code(HttpStatus.OK.value())
-				.message("가입되었습니다.")
-				.payload(userId)
-				.build();
-			return response;
 		}
+		String userId = memberService.signup(dto);
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("가입되었습니다.")
+			.payload(userId)
+			.build();
+		return response;
 	}
 
 	@PostMapping("/login")
 	public CommonResponse<Map> login(@Valid @RequestBody MemberRequestDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		} else {
-			MemberResponseDto member = memberService.getMemberInfo(dto);
-			HashMap<String, Object> map = new HashMap<>();
-			map.put("memberInfo", member);
-
-			CommonResponse<Map> response = CommonResponse.<Map>builder()
-				.code(HttpStatus.OK.value())
-				.message("로그인 되었습니다.")
-				.payload(map)
-				.build();
-			return response;
 		}
+		MemberResponseDto member = memberService.getMemberInfo(dto);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("memberInfo", member);
+
+		CommonResponse<Map> response = CommonResponse.<Map>builder()
+			.code(HttpStatus.OK.value())
+			.message("로그인 되었습니다.")
+			.payload(map)
+			.build();
+		return response;
 	}
 
 	@GetMapping("/memberInfo")
 	public CommonResponse<Map> getMemberInfo(@Valid MemberRequestDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		} else {
-			MemberResponseDto member = memberService.getMemberInfo(dto);
-			HashMap<String, Object> map = new HashMap<>();
-			map.put("memberInfo", member);
-
-			CommonResponse<Map> response = CommonResponse.<Map>builder()
-				.code(HttpStatus.OK.value())
-				.message("회원정보 조회")
-				.payload(map)
-				.build();
-			return response;
 		}
+		MemberResponseDto member = memberService.getMemberInfo(dto);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("memberInfo", member);
+
+		CommonResponse<Map> response = CommonResponse.<Map>builder()
+			.code(HttpStatus.OK.value())
+			.message("회원정보 조회")
+			.payload(map)
+			.build();
+		return response;
 	}
 
 	@GetMapping("/members/remainDays")

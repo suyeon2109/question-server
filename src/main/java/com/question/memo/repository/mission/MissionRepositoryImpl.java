@@ -1,4 +1,4 @@
-package com.question.memo.repository;
+package com.question.memo.repository.mission;
 
 import static com.question.memo.domain.QBadge.*;
 import static com.question.memo.domain.QMemberCompletedMission.*;
@@ -11,11 +11,12 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.question.memo.dto.mission.MissionResponseDto;
 import com.question.memo.dto.mission.QMissionResponseDto;
+import com.question.memo.repository.mission.MissionRepositoryCustom;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class MissionRepositoryImpl implements MissionRepositoryCustom{
+public class MissionRepositoryImpl implements MissionRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 	@Override
 	public List<MissionResponseDto> getMissionList(Long memberSeq) {

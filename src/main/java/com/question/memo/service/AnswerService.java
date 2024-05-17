@@ -19,9 +19,9 @@ import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.SignUpRequiredException;
-import com.question.memo.repository.AnswerRepository;
-import com.question.memo.repository.MemberRepository;
-import com.question.memo.repository.QuestionRepository;
+import com.question.memo.repository.answer.AnswerRepository;
+import com.question.memo.repository.member.MemberRepository;
+import com.question.memo.repository.question.QuestionRepository;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
