@@ -1,6 +1,8 @@
 package com.question.memo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.question.memo.domain.Answer;
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
@@ -47,6 +48,7 @@ public class AnswerController {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		}
+
 		List<AnswerResponseDto> list = answerService.getAnswerList(dto);
 
 		CommonResponse<List<AnswerResponseDto>> response = CommonResponse.<List<AnswerResponseDto>>builder()

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.domain.Question;
+import com.question.memo.dto.question.QuestionCreateDto;
 import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.MemberNotFoundException;
@@ -57,6 +58,14 @@ public class QuestionService {
 			.usedDate(LocalDate.now())
 			.member(member)
 			.question(member.getQuestion())
+			.build());
+	}
+
+	public void saveQuestion(QuestionCreateDto dto) {
+		questionRepository.save(Question.builder()
+			.question(dto.getQuestion())
+			.questionOrder(dto.getQuestionOrder())
+			.guestYn(dto.getGuestYn())
 			.build());
 	}
 }

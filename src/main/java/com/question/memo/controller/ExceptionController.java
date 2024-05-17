@@ -11,6 +11,7 @@ import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
+import com.question.memo.exception.SignUpRequiredException;
 
 @ControllerAdvice
 public class ExceptionController extends RuntimeException {
@@ -77,6 +78,18 @@ public class ExceptionController extends RuntimeException {
     @ExceptionHandler(AnswerNotFoundException.class)
     // @ApiResponse(responseCode = "463", description ="답변 리스트 없음")
     public ResponseEntity<ErrorResponse> answerNotFoundException(AnswerNotFoundException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(SignUpRequiredException.class)
+    // @ApiResponse(responseCode = "464", description ="회원가입 필요")
+    public ResponseEntity<ErrorResponse> signUpRequiredException(SignUpRequiredException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
             .message(ex.getMessage())

@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.question.memo.dto.CommonResponse;
+import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
+import com.question.memo.service.AnswerService;
 import com.question.memo.service.MemberService;
 
 import jakarta.validation.Valid;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 	private final MemberService memberService;
+	private final AnswerService answerService;
 
 	@PostMapping("/guests")
 	public CommonResponse<String> saveGuest(@Valid @RequestBody GuestCreateDto dto, BindingResult e) {
@@ -102,5 +105,22 @@ public class MemberController {
 				.build();
 			return response;
 		}
+	}
+
+	@GetMapping("/members/remainDays")
+	public CommonResponse<Map<String, Object>> checkGuestRemainDays(@Valid String uuid) {
+		String request = Optional.ofNullable(uuid).orElseThrow(() -> new IllegalArgumentException("uuid is null"));
+
+		AnswerResponseDto answer = answerService.getFirstAnswer(request);
+		Long expiredAfter = answerService.checkGuestRemainDays(answer);
+		Map<String, Object> map = new HashMap<>();
+		map.put("expiredAfter", expiredAfter);
+
+		CommonResponse<Map<String, Object>> response = CommonResponse.<Map<String, Object>>builder()
+			.code(HttpStatus.OK.value())
+			.message("게스트 이용 잔여일 조회")
+			.payload(map)
+			.build();
+		return response;
 	}
 }
