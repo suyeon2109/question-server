@@ -6,13 +6,19 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.question.memo.domain.Badge;
 import com.question.memo.domain.Member;
+import com.question.memo.domain.MemberReceivedBadge;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
+import com.question.memo.exception.BadgeNotFoundException;
+import com.question.memo.exception.BadgeNotReceivedException;
 import com.question.memo.exception.MemberNotFoundException;
+import com.question.memo.repository.badge.BadgeRepository;
+import com.question.memo.repository.badge.MemberReceivedBadgeRepository;
 import com.question.memo.repository.member.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
+	private final BadgeRepository badgeRepository;
+	private final MemberReceivedBadgeRepository memberReceivedBadgeRepository;
+
 	public String signup(MemberCreateDto dto) {
 		Optional<Member> findByUuid = memberRepository.findByUuid(dto.getUuid());
 		Optional<Member> findByMemberId = memberRepository.findByMemberId(dto.getMemberId());
@@ -88,13 +97,7 @@ public class MemberService {
 	}
 
 	public MemberResponseDto getMemberInfo(MemberRequestDto dto) {
-		Member member = dto.getMemberId() == null ?
-			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
-
-		if (!dto.getUuid().equals(member.getUuid())) {
-			member.editUuid(dto.getUuid());
-		}
+		Member member = getMember(dto.getMemberId(), dto.getUuid());
 
 		return MemberResponseDto.builder()
 			.memberSeq(member.getMemberSeq())
@@ -110,5 +113,16 @@ public class MemberService {
 			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
 			.badgeDate(member.getBadgeDate())
 			.build();
+	}
+
+	private Member getMember(String memberId, String uuid) {
+		Member member = memberId == null ?
+			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+
+		if (!uuid.equals(member.getUuid())) {
+			member.editUuid(uuid);
+		}
+		return member;
 	}
 }

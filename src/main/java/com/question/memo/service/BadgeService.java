@@ -1,5 +1,7 @@
 package com.question.memo.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,7 @@ import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.mission.MissionCreateDto;
 import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.BadgeNotReceivedException;
+import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.badge.BadgeRepository;
 import com.question.memo.repository.badge.MemberReceivedBadgeRepository;
@@ -55,8 +58,19 @@ public class BadgeService {
 			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
 
 		if (!uuid.equals(member.getUuid())) {
-			member.editUuid(uuid);
+			throw new DeviceNotMatchedException();
 		}
 		return member;
+	}
+
+	public void applyBadge(Long badgeSeq, MemberRequestDto dto) {
+		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
+		Optional<MemberReceivedBadge> receivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge);
+		if (receivedBadge.isPresent()) {
+			member.editBadge(badge);
+		} else {
+			throw new BadgeNotReceivedException();
+		}
 	}
 }

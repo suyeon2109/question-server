@@ -63,4 +63,9 @@ public class Member {
 		this.question = question;
 		this.lastQuestionDate = LocalDate.now();
 	}
+
+	public void editBadge(Badge badge) {
+		this.badge = badge;
+		this.badgeDate = LocalDateTime.now();
+	}
 }
