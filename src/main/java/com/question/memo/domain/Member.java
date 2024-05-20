@@ -6,9 +6,13 @@ import static jakarta.persistence.GenerationType.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberEditDto;
+import com.question.memo.dto.member.MemberStickersEditDto;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -45,6 +49,11 @@ public class Member {
 	private Badge badge;
 	private LocalDateTime badgeDate;
 
+	private String stickerYn;
+
+	@Enumerated(EnumType.STRING)
+	private PushAlarm pushAlarm;
+
 	public void editMemberInfo(MemberEditDto dto) {
 		this.memberId = dto.getMemberId();
 		this.nickname = dto.getNickname();
@@ -53,6 +62,8 @@ public class Member {
 		this.guestYn = dto.getGuestYn();
 		this.uuid = dto.getUuid();
 		this.createdAt = dto.getCreatedAt();
+		this.stickerYn = dto.getStickerYn();
+		this.pushAlarm = dto.getPushAlarm();
 	}
 
 	public void editUuid(String uuid) {
@@ -67,5 +78,13 @@ public class Member {
 	public void editBadge(Badge badge) {
 		this.badge = badge;
 		this.badgeDate = LocalDateTime.now();
+	}
+
+	public void editStickers(MemberStickersEditDto dto) {
+		this.stickerYn = dto.getStickerYn();
+	}
+
+	public void editPushAlarm(MemberAlarmsEditDto dto) {
+		this.pushAlarm = dto.getPushAlarm();
 	}
 }

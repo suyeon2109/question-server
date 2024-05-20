@@ -8,15 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.dto.member.GuestCreateDto;
+import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
+import com.question.memo.dto.member.MemberStickersEditDto;
 import com.question.memo.service.AnswerService;
 import com.question.memo.service.MemberService;
 
@@ -74,7 +77,7 @@ public class MemberController {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		}
-		MemberResponseDto member = memberService.getMemberInfo(dto);
+		MemberResponseDto member = memberService.login(dto);
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("memberInfo", member);
 
@@ -116,6 +119,34 @@ public class MemberController {
 			.code(HttpStatus.OK.value())
 			.message("게스트 이용 잔여일 조회")
 			.payload(map)
+			.build();
+		return response;
+	}
+
+	@PutMapping("/stickers")
+	public CommonResponse<String> setStickers(@Valid @RequestBody MemberStickersEditDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		}
+		memberService.setStickers(dto);
+
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("스티커 적용 여부가 업데이트 되었습니다.")
+			.build();
+		return response;
+	}
+
+	@PutMapping("/alarms")
+	public CommonResponse<String> setPushAlarms(@Valid @RequestBody MemberAlarmsEditDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		}
+		memberService.setAlarms(dto);
+
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("푸쉬알람이 업데이트 되었습니다.")
 			.build();
 		return response;
 	}
