@@ -15,4 +15,5 @@ public class AnswerResponseDto {
 	private String question;
 	private String nickname;
 	private String badge;
+	private String stickerYn;
 }

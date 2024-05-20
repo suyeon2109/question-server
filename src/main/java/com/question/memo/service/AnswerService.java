@@ -95,6 +95,7 @@ public class AnswerService {
 			.question(answer.getQuestion() == null ? null : answer.getQuestion().getQuestion())
 			.nickname(member.getNickname())
 			.badge(member.getBadge() == null ? null : member.getBadge().getBadge())
+			.stickerYn(member.getStickerYn())
 			.build();
 	}
 

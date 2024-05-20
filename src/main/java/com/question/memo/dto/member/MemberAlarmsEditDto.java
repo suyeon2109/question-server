@@ -1,23 +1,17 @@
 package com.question.memo.dto.member;
 
-import java.time.LocalDateTime;
-
 import com.question.memo.domain.PushAlarm;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class MemberEditDto {
-
+public class MemberAlarmsEditDto {
 	private String memberId;
-	private String nickname;
-	private String email;
-	private String ageRange;
-	private String guestYn;
+	@NotNull
 	private String uuid;
-	private LocalDateTime createdAt;
-	private String stickerYn;
+	@NotNull
 	private PushAlarm pushAlarm;
 }
