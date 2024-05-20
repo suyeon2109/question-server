@@ -16,6 +16,7 @@ import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.exception.AnswerNotFoundException;
+import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.SignUpRequiredException;
@@ -74,7 +75,7 @@ public class AnswerService {
 			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
 
 		if (!uuid.equals(member.getUuid())) {
-			member.editUuid(uuid);
+			throw new DeviceNotMatchedException();
 		}
 		return member;
 	}

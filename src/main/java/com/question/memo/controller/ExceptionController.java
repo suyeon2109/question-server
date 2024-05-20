@@ -10,6 +10,7 @@ import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.BadgeNotReceivedException;
+import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
@@ -129,6 +130,18 @@ public class ExceptionController extends RuntimeException {
     @ExceptionHandler(BadgeNotReceivedException.class)
     // @ApiResponse(responseCode = "467", description ="뱃지 미획득")
     public ResponseEntity<ErrorResponse> badgeNotReceivedException(BadgeNotReceivedException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(DeviceNotMatchedException.class)
+    // @ApiResponse(responseCode = "470", description ="기기 정보 불일치")
+    public ResponseEntity<ErrorResponse> deviceNotMatchedException(DeviceNotMatchedException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
             .message(ex.getMessage())
