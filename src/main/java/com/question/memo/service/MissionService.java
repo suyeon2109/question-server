@@ -13,6 +13,7 @@ import com.question.memo.dto.mission.MissionCreateDto;
 import com.question.memo.dto.mission.MissionRequestDto;
 import com.question.memo.dto.mission.MissionResponseDto;
 import com.question.memo.exception.BadgeNotFoundException;
+import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.repository.badge.BadgeRepository;
@@ -31,13 +32,14 @@ public class MissionService {
 	private final MissionBadgeRepository missionBadgeRepository;
 	private final BadgeRepository badgeRepository;
 
+	@Transactional(readOnly = true)
 	public List<MissionResponseDto> getMissionList(MissionRequestDto dto) {
 		Member member = dto.getMemberId() == null ?
 			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
 			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
 
 		if (!dto.getUuid().equals(member.getUuid())) {
-			member.editUuid(dto.getUuid());
+			throw new DeviceNotMatchedException();
 		}
 
 		return missionRepository.getMissionList(member.getMemberSeq());

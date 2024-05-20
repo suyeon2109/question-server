@@ -12,6 +12,7 @@ import com.question.memo.domain.Question;
 import com.question.memo.dto.question.QuestionCreateDto;
 import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
+import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.repository.member.MemberRepository;
@@ -29,13 +30,7 @@ public class QuestionService {
 	private final MemberUsedQuestionRepository memberUsedQuestionRepository;
 
 	public QuestionResponseDto getQuestion(QuestionRequestDto dto) {
-		Member member = dto.getMemberId() == null ?
-			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
-
-		if (!dto.getUuid().equals(member.getUuid())) {
-			member.editUuid(dto.getUuid());
-		}
+		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
 
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
 			Optional<Question> question = questionRepository.findByRandom(member);
@@ -53,6 +48,18 @@ public class QuestionService {
 				.build())
 			.orElseThrow(QuestionNotRemainException::new);
 	}
+
+	private Member getMemberInfo(String memberId, String uuid) {
+		Member member = memberId == null ?
+			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+
+		if (!uuid.equals(member.getUuid())) {
+			throw new DeviceNotMatchedException();
+		}
+		return member;
+	}
+
 	private void saveUsedQuestion(Member member) {
 		memberUsedQuestionRepository.save(MemberUsedQuestion.builder()
 			.usedDate(LocalDate.now())

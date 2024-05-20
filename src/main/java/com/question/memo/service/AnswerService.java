@@ -48,6 +48,7 @@ public class AnswerService {
 			.build());
 	}
 
+	@Transactional(readOnly = true)
 	public List<AnswerResponseDto> getAnswerList(AnswerListRequestDto dto) {
 		Member member = getMember(dto.getMemberId(), dto.getUuid());
 		List<Answer> list = answerRepository.findByMember(member).orElseThrow(AnswerNotFoundException::new);
@@ -80,6 +81,7 @@ public class AnswerService {
 		return member;
 	}
 
+	@Transactional(readOnly = true)
 	public AnswerResponseDto getAnswer(Long answerSeq) {
 		Answer answer = answerRepository.findById(answerSeq).orElseThrow(AnswerNotFoundException::new);
 		Member member = memberRepository.findById(answer.getMember().getMemberSeq())
@@ -119,6 +121,7 @@ public class AnswerService {
 		return Math.max(0L, 5L - daysDiff);
 	}
 
+	@Transactional(readOnly = true)
 	public AnswerResponseDto getFirstAnswer(@Valid String uuid) {
 		Member member = getMember(null, uuid);
 		Answer answer = answerRepository.findFirstByMemberOrderByAnswerDateAsc(member)
