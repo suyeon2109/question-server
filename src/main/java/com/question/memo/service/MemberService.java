@@ -6,19 +6,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.question.memo.domain.Badge;
 import com.question.memo.domain.Member;
-import com.question.memo.domain.MemberReceivedBadge;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
-import com.question.memo.exception.BadgeNotFoundException;
-import com.question.memo.exception.BadgeNotReceivedException;
 import com.question.memo.exception.MemberNotFoundException;
-import com.question.memo.repository.badge.BadgeRepository;
-import com.question.memo.repository.badge.MemberReceivedBadgeRepository;
 import com.question.memo.repository.member.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
-	private final BadgeRepository badgeRepository;
-	private final MemberReceivedBadgeRepository memberReceivedBadgeRepository;
 
 	public String signup(MemberCreateDto dto) {
 		Optional<Member> findByUuid = memberRepository.findByUuid(dto.getUuid());
@@ -89,6 +81,7 @@ public class MemberService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public void isDuplicatedNickname(String nickname) {
 		Optional<Member> byNickname = memberRepository.findByNickname(nickname);
 		if (byNickname.isPresent()) {

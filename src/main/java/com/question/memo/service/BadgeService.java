@@ -37,6 +37,7 @@ public class BadgeService {
 		return badge.getBadgeSeq();
 	}
 
+	@Transactional(readOnly = true)
 	public BadgeResponseDto getBadgeInfo(Long badgeSeq, MemberRequestDto dto) {
 		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
