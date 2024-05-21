@@ -37,6 +37,7 @@ public class Member {
 	private String ageRange;
 	private String guestYn;
 	private String uuid;
+	private String firebaseToken;
 	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = LAZY)
@@ -61,11 +62,15 @@ public class Member {
 		this.ageRange = dto.getAgeRange();
 		this.guestYn = dto.getGuestYn();
 		this.uuid = dto.getUuid();
+		this.firebaseToken = dto.getFirebaseToken();
 		this.createdAt = dto.getCreatedAt();
 		this.stickerYn = dto.getStickerYn();
 		this.pushAlarm = dto.getPushAlarm();
 	}
 
+	public void editFirebaseToken(String firebaseToken) {
+		this.firebaseToken = firebaseToken;
+	}
 	public void editUuid(String uuid) {
 		this.uuid = uuid;
 	}

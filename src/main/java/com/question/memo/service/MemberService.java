@@ -12,6 +12,8 @@ import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberCreateDto;
 import com.question.memo.dto.member.MemberEditDto;
+import com.question.memo.dto.member.MemberFirebaseTokenEditDto;
+import com.question.memo.dto.member.MemberLoginDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.dto.member.MemberStickersEditDto;
@@ -19,6 +21,7 @@ import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.member.MemberRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,6 +59,7 @@ public class MemberService {
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
+			.firebaseToken(dto.getFirebaseToken())
 			.createdAt(dto.getCreatedAt())
 			.stickerYn("N")
 			.pushAlarm(PushAlarm.NONE)
@@ -70,6 +74,7 @@ public class MemberService {
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
 			.uuid(dto.getUuid())
+			.firebaseToken(dto.getFirebaseToken())
 			.createdAt(LocalDateTime.now())
 			.stickerYn("N")
 			.pushAlarm(PushAlarm.NONE)
@@ -84,6 +89,7 @@ public class MemberService {
 			memberRepository.save(Member.builder()
 				.guestYn("Y")
 				.uuid(dto.getUuid())
+				.firebaseToken(dto.getFirebaseToken())
 				.createdAt(LocalDateTime.now())
 				.pushAlarm(PushAlarm.NONE)
 				.build());
@@ -98,8 +104,8 @@ public class MemberService {
 		}
 	}
 
-	public MemberResponseDto login(MemberRequestDto dto) {
-		Member member = getMemberAndEditUuid(dto.getMemberId(), dto.getUuid());
+	public MemberResponseDto login(@Valid MemberLoginDto dto) {
+		Member member = getMemberAndEditUuid(dto);
 		return getMemberResponseDto(member);
 	}
 
@@ -117,6 +123,7 @@ public class MemberService {
 			.ageRange(member.getAgeRange())
 			.guestYn(member.getGuestYn())
 			.uuid(member.getUuid())
+			.firebaseToken(member.getFirebaseToken())
 			.createdAt(member.getCreatedAt())
 			.lastQuestionId(member.getQuestion() == null ? null : member.getQuestion().getQuestionSeq())
 			.lastQuestionDate(member.getLastQuestionDate())
@@ -127,13 +134,17 @@ public class MemberService {
 			.build();
 	}
 
-	private Member getMemberAndEditUuid(String memberId, String uuid) {
-		Member member = memberId == null ?
-			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
+	private Member getMemberAndEditUuid(MemberLoginDto dto) {
+		Member member = dto.getMemberId() == null ?
+			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
 
-		if (!uuid.equals(member.getUuid())) {
-			member.editUuid(uuid);
+		if (!dto.getUuid().equals(member.getUuid())) {
+			member.editUuid(dto.getUuid());
+		}
+
+		if (!dto.getFirebaseToken().equals(member.getFirebaseToken())) {
+			member.editFirebaseToken(dto.getFirebaseToken());
 		}
 		return member;
 	}
@@ -157,5 +168,10 @@ public class MemberService {
 	public void setAlarms(MemberAlarmsEditDto dto) {
 		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
 		member.editPushAlarm(dto);
+	}
+
+	public void setFirebaseTokens(MemberFirebaseTokenEditDto dto) {
+		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		member.editFirebaseToken(dto.getFirebaseToken());
 	}
 }
