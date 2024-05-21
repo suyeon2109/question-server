@@ -42,6 +42,7 @@
         # gitignore 한 firebase key를 build시 포함
         - name: Write firebase json file
           run: |
+              mkdir firebase
               echo "${{secrets.FIREBASE_KEY}}" > firebase/square-41ad3-firebase-adminsdk-vb1k1-7d1feb2f25.json
         
         # Gradle 빌드 엑션을 이용해서 프로젝트 빌드
