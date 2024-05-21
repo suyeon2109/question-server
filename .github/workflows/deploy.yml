@@ -41,12 +41,9 @@
 
         # gitignore 한 firebase key를 build시 포함
         - name: Write firebase json file
-          uses: 1arp/create-a-file-action@0.4.5
-          with: 
-            path: 'firebase'
-            isAbsolutePath: false
-            file: square-41ad3-firebase-adminsdk-vb1k1-7d1feb2f25.json
-            content: ${{secrets.FIREBASE_KEY}}
+          env:
+            FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          run: echo "$FIREBASE_KEY" > src/main/resources/firebase/square-41ad3-firebase-adminsdk-vb1k1-7d1feb2f25.json
 
         # Gradle 빌드 엑션을 이용해서 프로젝트 빌드
         - name: Build with Gradle
