@@ -18,6 +18,7 @@ public class MemberResponseDto {
 	private String ageRange;
 	private String guestYn;
 	private String uuid;
+	private String firebaseToken;
 	private Long lastQuestionId;
 	private LocalDate lastQuestionDate;
 	private String badge;

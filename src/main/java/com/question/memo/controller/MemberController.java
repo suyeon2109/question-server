@@ -17,6 +17,8 @@ import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberCreateDto;
+import com.question.memo.dto.member.MemberFirebaseTokenEditDto;
+import com.question.memo.dto.member.MemberLoginDto;
 import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.member.MemberResponseDto;
 import com.question.memo.dto.member.MemberStickersEditDto;
@@ -73,7 +75,7 @@ public class MemberController {
 	}
 
 	@PostMapping("/login")
-	public CommonResponse<Map> login(@Valid @RequestBody MemberRequestDto dto, BindingResult e) {
+	public CommonResponse<Map> login(@Valid @RequestBody MemberLoginDto dto, BindingResult e) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		}
@@ -147,6 +149,20 @@ public class MemberController {
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.OK.value())
 			.message("푸쉬알람이 업데이트 되었습니다.")
+			.build();
+		return response;
+	}
+
+	@PutMapping("/firebaseTokens")
+	public CommonResponse<String> setFirebaseTokens(@Valid @RequestBody MemberFirebaseTokenEditDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		}
+		memberService.setFirebaseTokens(dto);
+
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("firebase 토큰이 업데이트 되었습니다.")
 			.build();
 		return response;
 	}
