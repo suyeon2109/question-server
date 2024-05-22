@@ -9,4 +9,5 @@ public class QuestionResponseDto {
 	private Long questionSeq;
 	private String question;
 	private Long questionOrder;
+	private Long count;
 }
