@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.question.QuestionCreateDto;
+import com.question.memo.dto.question.QuestionReportDto;
 import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.service.QuestionService;
@@ -46,6 +47,20 @@ public class QuestionController {
 			CommonResponse<String> response = CommonResponse.<String>builder()
 				.code(HttpStatus.OK.value())
 				.message("질문이 등록되었습니다.")
+				.build();
+			return response;
+		}
+	}
+
+	@PostMapping("/report")
+	public CommonResponse<String> reportQuestion(@Valid @RequestBody QuestionReportDto dto, BindingResult e) {
+		if (e.hasErrors()) {
+			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
+		} else {
+			questionService.reportQuestion(dto);
+			CommonResponse<String> response = CommonResponse.<String>builder()
+				.code(HttpStatus.OK.value())
+				.message("질문이 제보되었습니다.")
 				.build();
 			return response;
 		}

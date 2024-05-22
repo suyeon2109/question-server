@@ -47,8 +47,12 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.3'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.3'
 
+    // firebase 푸시알람
     implementation 'com.google.firebase:firebase-admin:9.2.0'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
+    // 질문 제보하기(email 전송)
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {
