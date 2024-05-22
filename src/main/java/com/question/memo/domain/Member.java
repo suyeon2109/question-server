@@ -6,6 +6,7 @@ import static jakarta.persistence.GenerationType.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.question.memo.dto.fcm.PushAlarm;
 import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberEditDto;
 import com.question.memo.dto.member.MemberStickersEditDto;

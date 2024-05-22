@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.AnswerNotFoundException;
 import com.question.memo.exception.BadgeNotFoundException;
@@ -132,6 +133,18 @@ public class ExceptionController extends RuntimeException {
     public ResponseEntity<ErrorResponse> badgeNotReceivedException(BadgeNotReceivedException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(FirebaseMessagingException.class)
+    // @ApiResponse(responseCode = "468", description ="푸시알림 전송실패")
+    public ResponseEntity<ErrorResponse> firebaseMessagingException(FirebaseMessagingException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(468)
             .message(ex.getMessage())
             .description(request.getDescription(false))
             .build();

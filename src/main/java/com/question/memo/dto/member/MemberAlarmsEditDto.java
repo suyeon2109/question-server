@@ -1,6 +1,6 @@
 package com.question.memo.dto.member;
 
-import com.question.memo.domain.PushAlarm;
+import com.question.memo.dto.fcm.PushAlarm;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

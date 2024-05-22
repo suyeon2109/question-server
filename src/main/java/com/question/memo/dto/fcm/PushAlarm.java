@@ -1,4 +1,4 @@
-package com.question.memo.domain;
+package com.question.memo.dto.fcm;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
