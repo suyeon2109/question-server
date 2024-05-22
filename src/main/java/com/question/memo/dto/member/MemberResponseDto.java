@@ -3,7 +3,7 @@ package com.question.memo.dto.member;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.question.memo.domain.PushAlarm;
+import com.question.memo.dto.fcm.PushAlarm;
 
 import lombok.Builder;
 import lombok.Getter;

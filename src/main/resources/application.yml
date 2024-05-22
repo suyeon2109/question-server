@@ -30,3 +30,14 @@ spring:
 #        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         show_sql: true
+
+schedule:
+  morning:
+    use: false
+    cron: 0 0 07 * * ?
+  evening:
+    use: false
+    cron: 0 0 20 * * ?
+  dawn:
+    use: false
+    cron: 0 0 01 * * ?

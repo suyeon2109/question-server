@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.question.memo.domain.Member;
-import com.question.memo.domain.PushAlarm;
+import com.question.memo.dto.fcm.PushAlarm;
 import com.question.memo.dto.member.GuestCreateDto;
 import com.question.memo.dto.member.MemberAlarmsEditDto;
 import com.question.memo.dto.member.MemberCreateDto;
