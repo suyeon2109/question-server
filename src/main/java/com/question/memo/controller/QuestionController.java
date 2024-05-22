@@ -27,7 +27,6 @@ public class QuestionController {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		}
-
 		QuestionResponseDto question = questionService.getQuestion(dto);
 
 		CommonResponse<QuestionResponseDto> response = CommonResponse.<QuestionResponseDto>builder()

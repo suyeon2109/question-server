@@ -15,6 +15,7 @@ import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
+import com.question.memo.repository.answer.AnswerRepository;
 import com.question.memo.repository.member.MemberRepository;
 import com.question.memo.repository.member.MemberUsedQuestionRepository;
 import com.question.memo.repository.question.QuestionRepository;
@@ -27,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 public class QuestionService {
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
+	private final AnswerRepository answerRepository;
 	private final MemberUsedQuestionRepository memberUsedQuestionRepository;
 
 	public QuestionResponseDto getQuestion(QuestionRequestDto dto) {
 		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Long count = answerRepository.countByMember(member);
 
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
 			Optional<Question> question = questionRepository.findByRandom(member);
@@ -45,6 +48,7 @@ public class QuestionService {
 				.questionSeq(q.getQuestionSeq())
 				.question(q.getQuestion())
 				.questionOrder(q.getQuestionOrder())
+				.count(count + 1)
 				.build())
 			.orElseThrow(QuestionNotRemainException::new);
 	}
