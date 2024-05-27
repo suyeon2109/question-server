@@ -166,4 +166,16 @@ public class MemberController {
 			.build();
 		return response;
 	}
+
+	@GetMapping("/nicknames/random")
+	public CommonResponse<String> getRandomNickname() {
+		String nickname = memberService.getRandomNickname();
+
+		CommonResponse<String> response = CommonResponse.<String>builder()
+			.code(HttpStatus.OK.value())
+			.message("랜덤 닉네임이 생성되었습니다.")
+			.payload(nickname)
+			.build();
+		return response;
+	}
 }

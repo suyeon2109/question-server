@@ -174,4 +174,15 @@ public class MemberService {
 		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
 		member.editFirebaseToken(dto.getFirebaseToken());
 	}
+
+	@Transactional(readOnly = true)
+	public String getRandomNickname() {
+		String randomNickname;
+		Optional<Member> byNickname;
+		do {
+			randomNickname = memberRepository.findAdjective() + " " + memberRepository.findNoun();
+			byNickname = memberRepository.findByNickname(randomNickname);
+		} while (byNickname.isPresent());
+		return randomNickname;
+	}
 }
