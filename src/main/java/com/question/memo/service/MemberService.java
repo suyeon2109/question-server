@@ -49,7 +49,7 @@ public class MemberService {
 		return dto.getMemberId();
 	}
 
-	private static void editMember(MemberCreateDto dto, Member member) {
+	private void editMember(MemberCreateDto dto, Member member) {
 		member.editMemberInfo(MemberEditDto.builder()
 			.memberId(dto.getMemberId())
 			.nickname(dto.getNickname())
