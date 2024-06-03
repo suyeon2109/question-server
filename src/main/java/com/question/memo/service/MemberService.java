@@ -31,24 +31,22 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	public String signup(MemberCreateDto dto) {
-		Optional<Member> findByUuid = memberRepository.findByUuid(dto.getUuid());
+		Optional<Member> findByFcmToken = memberRepository.findByFirebaseToken(dto.getFirebaseToken());
 		Optional<Member> findByMemberId = memberRepository.findByMemberId(dto.getMemberId());
+		isDuplicatedNickname(dto.getNickname());
 
-		if (findByMemberId.isEmpty() && findByUuid.isEmpty()) {
-			createMember(dto);
-			return dto.getMemberId();
+		if (findByMemberId.isPresent()) {
+			throw new IllegalStateException("이미 가입된 아이디 입니다.");
 		}
 
-		if (findByUuid.isPresent()) {
-			if (findByUuid.get().getMemberId() != null) {
+		findByFcmToken.ifPresentOrElse(member -> {
+			if (member.getMemberId() != null) {
 				throw new IllegalStateException("이미 가입된 카카오 계정이 존재합니다.");
 			}
-			Member member = findByUuid.get();
 			editMember(dto, member);
-			return dto.getMemberId();
-		}
+		}, () -> createMember(dto));
 
-		throw new IllegalStateException("이미 가입된 아이디 입니다.");
+		return dto.getMemberId();
 	}
 
 	private static void editMember(MemberCreateDto dto, Member member) {
@@ -58,7 +56,6 @@ public class MemberService {
 			.email(dto.getEmail())
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
-			.uuid(dto.getUuid())
 			.firebaseToken(dto.getFirebaseToken())
 			.createdAt(dto.getCreatedAt())
 			.stickerYn("N")
@@ -73,7 +70,6 @@ public class MemberService {
 			.email(dto.getEmail())
 			.ageRange(dto.getAgeRange())
 			.guestYn("N")
-			.uuid(dto.getUuid())
 			.firebaseToken(dto.getFirebaseToken())
 			.createdAt(LocalDateTime.now())
 			.stickerYn("N")
@@ -82,13 +78,12 @@ public class MemberService {
 	}
 
 	public void saveGuest(GuestCreateDto dto) {
-		Optional<Member> findByUuid = memberRepository.findByUuid(dto.getUuid());
-		if (findByUuid.isPresent()) {
+		Optional<Member> findByFcmToken = memberRepository.findByFirebaseToken(dto.getFirebaseToken());
+		if (findByFcmToken.isPresent()) {
 			throw new IllegalStateException("이미 등록된 게스트 입니다.");
 		} else {
 			memberRepository.save(Member.builder()
 				.guestYn("Y")
-				.uuid(dto.getUuid())
 				.firebaseToken(dto.getFirebaseToken())
 				.createdAt(LocalDateTime.now())
 				.pushAlarm(PushAlarm.NONE)
@@ -105,12 +100,19 @@ public class MemberService {
 	}
 
 	public MemberResponseDto login(@Valid MemberLoginDto dto) {
-		Member member = getMemberAndEditUuid(dto);
+		Member member = dto.getMemberId() == null ?
+			memberRepository.findByFirebaseToken(dto.getFirebaseToken()).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
+
+		if (!dto.getFirebaseToken().equals(member.getFirebaseToken())) {
+			member.editFirebaseToken(dto.getFirebaseToken());
+		}
+
 		return getMemberResponseDto(member);
 	}
 
 	public MemberResponseDto getMemberInfo(MemberRequestDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		return getMemberResponseDto(member);
 	}
 
@@ -122,7 +124,6 @@ public class MemberService {
 			.email(member.getEmail())
 			.ageRange(member.getAgeRange())
 			.guestYn(member.getGuestYn())
-			.uuid(member.getUuid())
 			.firebaseToken(member.getFirebaseToken())
 			.createdAt(member.getCreatedAt())
 			.lastQuestionId(member.getQuestion() == null ? null : member.getQuestion().getQuestionSeq())
@@ -134,45 +135,30 @@ public class MemberService {
 			.build();
 	}
 
-	private Member getMemberAndEditUuid(MemberLoginDto dto) {
-		Member member = dto.getMemberId() == null ?
-			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
-
-		if (!dto.getUuid().equals(member.getUuid())) {
-			member.editUuid(dto.getUuid());
-		}
-
-		if (!dto.getFirebaseToken().equals(member.getFirebaseToken())) {
-			member.editFirebaseToken(dto.getFirebaseToken());
-		}
-		return member;
-	}
-
-	private Member getMemberInfo(String memberId, String uuid) {
+	public Member getMemberInfo(String memberId, String firebaseToken) {
 		Member member = memberId == null ?
-			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
+			memberRepository.findByFirebaseToken(firebaseToken).orElseThrow(MemberNotFoundException::new) :
 			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
 
-		if (!uuid.equals(member.getUuid())) {
+		if (!firebaseToken.equals(member.getFirebaseToken())) {
 			throw new DeviceNotMatchedException();
 		}
 		return member;
 	}
 
 	public void setStickers(MemberStickersEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		member.editStickers(dto);
 	}
 
 	public void setAlarms(MemberAlarmsEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		member.editPushAlarm(dto);
 	}
 
 	public void setFirebaseTokens(MemberFirebaseTokenEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
-		member.editFirebaseToken(dto.getFirebaseToken());
+		Member member = getMemberInfo(dto.getMemberId(), dto.getCurrentFirebaseToken());
+		member.editFirebaseToken(dto.getNewFirebaseToken());
 	}
 
 	@Transactional(readOnly = true)

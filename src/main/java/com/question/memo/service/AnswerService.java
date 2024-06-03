@@ -16,7 +16,6 @@ import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.exception.AnswerNotFoundException;
-import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.SignUpRequiredException;
@@ -34,8 +33,9 @@ public class AnswerService {
 	private final AnswerRepository answerRepository;
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
+	private final MemberService memberService;
 	public void saveAnswer(AnswerRequestDto dto) {
-		Member member = getMember(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 
 		Question question = questionRepository.findById(dto.getQuestionSeq())
 			.orElseThrow(QuestionNotFoundException::new);
@@ -50,7 +50,7 @@ public class AnswerService {
 
 	@Transactional(readOnly = true)
 	public List<AnswerResponseDto> getAnswerList(AnswerListRequestDto dto) {
-		Member member = getMember(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		List<Answer> list = answerRepository.findByMember(member).orElseThrow(AnswerNotFoundException::new);
 
 		List<AnswerResponseDto> response = new ArrayList<>();
@@ -63,22 +63,12 @@ public class AnswerService {
 				.questionSeq(a.getQuestion().getQuestionSeq())
 				.question(a.getQuestion().getQuestion())
 				.nickname(a.getMember().getNickname())
-				.badge(a.getMember().getBadge().getBadge())
+				.badge(a.getMember().getBadge() == null ? null : a.getMember().getBadge().getBadge())
+				.stickerYn(a.getMember().getStickerYn())
 				.build();
 			response.add(build);
 		});
 		return response;
-	}
-
-	private Member getMember(String memberId, String uuid) {
-		Member member = memberId == null ?
-			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
-
-		if (!uuid.equals(member.getUuid())) {
-			throw new DeviceNotMatchedException();
-		}
-		return member;
 	}
 
 	@Transactional(readOnly = true)
@@ -100,7 +90,7 @@ public class AnswerService {
 	}
 
 	public Long checkGuestRemainDays(AnswerResponseDto answer) {
-		if (answer == null || !isAnswerWithinLastThreeDays(answer)) {
+		if (answer.getAnswerDate() == null || !isAnswerWithinLastThreeDays(answer)) {
 			return null;
 		}
 
@@ -123,10 +113,10 @@ public class AnswerService {
 	}
 
 	@Transactional(readOnly = true)
-	public AnswerResponseDto getFirstAnswer(@Valid String uuid) {
-		Member member = getMember(null, uuid);
+	public AnswerResponseDto getFirstAnswer(@Valid String firebaseToken) {
+		Member member = memberService.getMemberInfo(null, firebaseToken);
 		Answer answer = answerRepository.findFirstByMemberOrderByAnswerDateAsc(member)
-			.orElseThrow(AnswerNotFoundException::new);
+			.orElse(new Answer());
 
 		return AnswerResponseDto.builder()
 			.answerSeq(answer.getAnswerSeq())

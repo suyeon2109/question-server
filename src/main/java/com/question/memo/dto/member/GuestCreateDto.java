@@ -12,7 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GuestCreateDto {
 	@NotNull
-	private String uuid;
-	@NotNull
 	private String firebaseToken;
 }

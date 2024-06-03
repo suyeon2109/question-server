@@ -9,7 +9,7 @@ import lombok.Getter;
 public class MemberFirebaseTokenEditDto {
 	private String memberId;
 	@NotNull
-	private String uuid;
+	private String currentFirebaseToken;
 	@NotNull
-	private String firebaseToken;
+	private String newFirebaseToken;
 }

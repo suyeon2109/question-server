@@ -11,7 +11,7 @@ import lombok.Getter;
 public class MemberAlarmsEditDto {
 	private String memberId;
 	@NotNull
-	private String uuid;
+	private String firebaseToken;
 	@NotNull
 	private PushAlarm pushAlarm;
 }

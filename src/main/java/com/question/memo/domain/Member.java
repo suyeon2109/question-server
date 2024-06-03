@@ -37,7 +37,6 @@ public class Member {
 	private String email;
 	private String ageRange;
 	private String guestYn;
-	private String uuid;
 	private String firebaseToken;
 	private LocalDateTime createdAt;
 
@@ -62,7 +61,6 @@ public class Member {
 		this.email = dto.getEmail();
 		this.ageRange = dto.getAgeRange();
 		this.guestYn = dto.getGuestYn();
-		this.uuid = dto.getUuid();
 		this.firebaseToken = dto.getFirebaseToken();
 		this.createdAt = dto.getCreatedAt();
 		this.stickerYn = dto.getStickerYn();
@@ -71,9 +69,6 @@ public class Member {
 
 	public void editFirebaseToken(String firebaseToken) {
 		this.firebaseToken = firebaseToken;
-	}
-	public void editUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public void editQuestion(Question question) {

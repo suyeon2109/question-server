@@ -9,7 +9,7 @@ import lombok.Getter;
 public class AnswerRequestDto {
 	private String memberId;
 	@NotNull
-	private String uuid;
+	private String firebaseToken;
 	@NotNull
 	private Long questionSeq;
 	@NotNull
