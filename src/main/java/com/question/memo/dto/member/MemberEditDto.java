@@ -16,7 +16,6 @@ public class MemberEditDto {
 	private String email;
 	private String ageRange;
 	private String guestYn;
-	private String uuid;
 	private String firebaseToken;
 	private LocalDateTime createdAt;
 	private String stickerYn;
