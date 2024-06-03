@@ -2,6 +2,7 @@ package com.question.memo.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -165,8 +166,9 @@ public class MemberService {
 	public String getRandomNickname() {
 		String randomNickname;
 		Optional<Member> byNickname;
+		Random random = new Random();
 		do {
-			randomNickname = memberRepository.findAdjective() + " " + memberRepository.findNoun();
+			randomNickname = memberRepository.findAdjective() + " " + memberRepository.findNoun() + " " + (1 + random.nextInt(999));
 			byNickname = memberRepository.findByNickname(randomNickname);
 		} while (byNickname.isPresent());
 		return randomNickname;
