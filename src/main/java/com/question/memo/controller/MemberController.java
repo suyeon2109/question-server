@@ -109,8 +109,8 @@ public class MemberController {
 	}
 
 	@GetMapping("/members/remainDays")
-	public CommonResponse<Map<String, Object>> checkGuestRemainDays(String uuid) {
-		String request = Optional.ofNullable(uuid).orElseThrow(() -> new IllegalArgumentException("uuid is null"));
+	public CommonResponse<Map<String, Object>> checkGuestRemainDays(String firebaseToken) {
+		String request = Optional.ofNullable(firebaseToken).orElseThrow(() -> new IllegalArgumentException("firebaseToken is null"));
 
 		AnswerResponseDto answer = answerService.getFirstAnswer(request);
 		Long remainDays = answerService.checkGuestRemainDays(answer);

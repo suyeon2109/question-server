@@ -14,8 +14,7 @@ import com.question.memo.dto.fcm.PushAlarm;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findByMemberId(String memberId);
-
-	Optional<Member> findByUuid(String uuid);
+	Optional<Member> findByFirebaseToken(String firebaseToken);
 
 	Optional<Member> findByNickname(String nickname);
 
@@ -26,4 +25,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	@Query(value = "SELECT word FROM nickname WHERE type = 'NOUN' order by RAND() limit 1", nativeQuery = true)
 	String findNoun();
+
 }

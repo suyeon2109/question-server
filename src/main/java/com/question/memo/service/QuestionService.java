@@ -15,11 +15,8 @@ import com.question.memo.dto.question.QuestionCreateDto;
 import com.question.memo.dto.question.QuestionReportDto;
 import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
-import com.question.memo.exception.DeviceNotMatchedException;
-import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.repository.answer.AnswerRepository;
-import com.question.memo.repository.member.MemberRepository;
 import com.question.memo.repository.member.MemberUsedQuestionRepository;
 import com.question.memo.repository.question.QuestionRepository;
 
@@ -29,14 +26,14 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class QuestionService {
-	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final AnswerRepository answerRepository;
 	private final MemberUsedQuestionRepository memberUsedQuestionRepository;
 	private final JavaMailSender javaMailSender;
+	private final MemberService memberService;
 
 	public QuestionResponseDto getQuestion(QuestionRequestDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		Long count = answerRepository.countByMember(member);
 
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
@@ -57,17 +54,6 @@ public class QuestionService {
 			.orElseThrow(QuestionNotRemainException::new);
 	}
 
-	private Member getMemberInfo(String memberId, String uuid) {
-		Member member = memberId == null ?
-			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
-
-		if (!uuid.equals(member.getUuid())) {
-			throw new DeviceNotMatchedException();
-		}
-		return member;
-	}
-
 	private void saveUsedQuestion(Member member) {
 		memberUsedQuestionRepository.save(MemberUsedQuestion.builder()
 			.usedDate(LocalDate.now())
@@ -85,12 +71,12 @@ public class QuestionService {
 	}
 
 	public void reportQuestion(QuestionReportDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setSubject("❗사각사각 질문 제보");
 		message.setTo("rawfish.go@gmail.com");
 		message.setText("제보자 id : " + member.getMemberId() + "\n" +
-			"제보자 uuid : " + member.getUuid() + "\n" +
+			"제보자 fcmToken : " + member.getFirebaseToken() + "\n" +
 			"제보자 닉네임 : " + member.getNickname() + "\n" +
 			"질문 : "+ dto.getQuestion());
 

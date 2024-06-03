@@ -9,5 +9,5 @@ import lombok.Getter;
 public class MemberRequestDto {
 	private String memberId;
 	@NotNull
-	private String uuid;
+	private String firebaseToken;
 }

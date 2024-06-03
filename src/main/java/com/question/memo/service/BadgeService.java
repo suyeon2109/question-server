@@ -13,11 +13,8 @@ import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.dto.mission.MissionCreateDto;
 import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.BadgeNotReceivedException;
-import com.question.memo.exception.DeviceNotMatchedException;
-import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.badge.BadgeRepository;
 import com.question.memo.repository.badge.MemberReceivedBadgeRepository;
-import com.question.memo.repository.member.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class BadgeService {
 	private final BadgeRepository badgeRepository;
 	private final MemberReceivedBadgeRepository memberReceivedBadgeRepository;
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 	public Long saveBadge(MissionCreateDto dto) {
 		Badge badge = badgeRepository.save(Badge.builder()
 			.badge(dto.getBadge())
@@ -39,7 +36,7 @@ public class BadgeService {
 
 	@Transactional(readOnly = true)
 	public BadgeResponseDto getBadgeInfo(Long badgeSeq, MemberRequestDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
 		MemberReceivedBadge memberReceivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge)
 			.orElseThrow(BadgeNotReceivedException::new);
@@ -53,19 +50,8 @@ public class BadgeService {
 			.build();
 	}
 
-	private Member getMemberInfo(String memberId, String uuid) {
-		Member member = memberId == null ?
-			memberRepository.findByUuid(uuid).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(memberId).orElseThrow(MemberNotFoundException::new);
-
-		if (!uuid.equals(member.getUuid())) {
-			throw new DeviceNotMatchedException();
-		}
-		return member;
-	}
-
 	public void applyBadge(Long badgeSeq, MemberRequestDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getUuid());
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
 		Optional<MemberReceivedBadge> receivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge);
 		if (receivedBadge.isPresent()) {

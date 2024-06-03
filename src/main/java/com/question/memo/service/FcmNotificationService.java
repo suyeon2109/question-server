@@ -53,16 +53,16 @@ public class FcmNotificationService {
 
 			return createSuccessResponse();
 		} catch (FirebaseMessagingException e) {
-			return createErrorResponse(e.getMessage(), member.getUuid());
+			return createErrorResponse(e.getMessage(), member.getFirebaseToken());
 		}
 	}
 
 	@NotNull
-	private static ResponseEntity<ErrorResponse> createErrorResponse(String errorMessage, String uuid) {
+	private static ResponseEntity<ErrorResponse> createErrorResponse(String errorMessage, String fcmToken) {
 		ErrorResponse response = ErrorResponse.builder()
 			.code(468)
 			.message(errorMessage)
-			.description(" uuid: " + uuid)
+			.description(" fcmToken: " + fcmToken)
 			.build();
 
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

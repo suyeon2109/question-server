@@ -13,11 +13,8 @@ import com.question.memo.dto.mission.MissionCreateDto;
 import com.question.memo.dto.mission.MissionRequestDto;
 import com.question.memo.dto.mission.MissionResponseDto;
 import com.question.memo.exception.BadgeNotFoundException;
-import com.question.memo.exception.DeviceNotMatchedException;
-import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.repository.badge.BadgeRepository;
-import com.question.memo.repository.member.MemberRepository;
 import com.question.memo.repository.mission.MissionBadgeRepository;
 import com.question.memo.repository.mission.MissionRepository;
 
@@ -28,20 +25,13 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class MissionService {
 	private final MissionRepository missionRepository;
-	private final MemberRepository memberRepository;
 	private final MissionBadgeRepository missionBadgeRepository;
 	private final BadgeRepository badgeRepository;
+	private final MemberService memberService;
 
 	@Transactional(readOnly = true)
 	public List<MissionResponseDto> getMissionList(MissionRequestDto dto) {
-		Member member = dto.getMemberId() == null ?
-			memberRepository.findByUuid(dto.getUuid()).orElseThrow(MemberNotFoundException::new) :
-			memberRepository.findByMemberId(dto.getMemberId()).orElseThrow(MemberNotFoundException::new);
-
-		if (!dto.getUuid().equals(member.getUuid())) {
-			throw new DeviceNotMatchedException();
-		}
-
+		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		return missionRepository.getMissionList(member.getMemberSeq());
 	}
 

@@ -18,8 +18,6 @@ public class MemberCreateDto {
 	@NotNull
 	private String nickname;
 	@NotNull
-	private String uuid;
-	@NotNull
 	private String firebaseToken;
 	private String email;
 	private String ageRange;
