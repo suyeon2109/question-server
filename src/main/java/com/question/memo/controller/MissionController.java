@@ -14,7 +14,6 @@ import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.mission.MissionCreateDto;
 import com.question.memo.dto.mission.MissionRequestDto;
 import com.question.memo.dto.mission.MissionResponseDto;
-import com.question.memo.service.BadgeService;
 import com.question.memo.service.MissionService;
 
 import jakarta.validation.Valid;
@@ -25,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/missions")
 public class MissionController {
 	private final MissionService missionService;
-	private final BadgeService badgeService;
+
 	@GetMapping
 	public CommonResponse<List<MissionResponseDto>> getMissionList(@Valid MissionRequestDto dto, BindingResult e) {
 		if (e.hasErrors()) {
@@ -46,13 +45,11 @@ public class MissionController {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		}
-		Long missionSeq = missionService.saveMission(dto);
-		Long badgeSeq = badgeService.saveBadge(dto);
-		missionService.saveMissionBadge(missionSeq, badgeSeq);
+		missionService.saveMission(dto);
 
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.OK.value())
-			.message("미션과 뱃지가 등록되었습니다.")
+			.message("미션이 등록되었습니다.")
 			.build();
 		return response;
 	}

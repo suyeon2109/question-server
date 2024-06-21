@@ -23,5 +23,5 @@ public class Badge {
 	private Long badgeSeq;
 	private String badge;
 	private String description;
-	private Long badgeOrder;
+	private Long requiredMissions;
 }
