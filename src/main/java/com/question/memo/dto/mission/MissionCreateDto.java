@@ -11,8 +11,4 @@ public class MissionCreateDto {
 	private String mission;
 	private String missionDescription;
 	private Long missionOrder;
-	@NotNull
-	private String badge;
-	private String badgeDescription;
-	private Long badgeOrder;
 }
