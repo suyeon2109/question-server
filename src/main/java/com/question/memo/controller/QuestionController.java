@@ -5,6 +5,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,11 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class QuestionController {
 	private final QuestionService questionService;
 	@GetMapping
-	public CommonResponse<QuestionResponseDto> getQuestion(@Valid QuestionRequestDto dto, BindingResult e) {
-		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		}
-		QuestionResponseDto question = questionService.getQuestion(dto);
+	public CommonResponse<QuestionResponseDto> getQuestion(@RequestHeader("Authorization") String token) {
+		QuestionResponseDto question = questionService.getQuestion(token);
 
 		CommonResponse<QuestionResponseDto> response = CommonResponse.<QuestionResponseDto>builder()
 			.code(HttpStatus.OK.value())
@@ -53,11 +51,11 @@ public class QuestionController {
 	}
 
 	@PostMapping("/report")
-	public CommonResponse<String> reportQuestion(@Valid @RequestBody QuestionReportDto dto, BindingResult e) {
+	public CommonResponse<String> reportQuestion(@Valid @RequestBody QuestionReportDto dto, BindingResult e, @RequestHeader("Authorization") String token) {
 		if (e.hasErrors()) {
 			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
 		} else {
-			questionService.reportQuestion(dto);
+			questionService.reportQuestion(token, dto);
 			CommonResponse<String> response = CommonResponse.<String>builder()
 				.code(HttpStatus.OK.value())
 				.message("질문이 제보되었습니다.")

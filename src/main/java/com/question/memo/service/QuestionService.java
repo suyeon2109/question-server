@@ -13,7 +13,6 @@ import com.question.memo.domain.MemberUsedQuestion;
 import com.question.memo.domain.Question;
 import com.question.memo.dto.question.QuestionCreateDto;
 import com.question.memo.dto.question.QuestionReportDto;
-import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.repository.answer.AnswerRepository;
@@ -32,8 +31,8 @@ public class QuestionService {
 	private final JavaMailSender javaMailSender;
 	private final MemberService memberService;
 
-	public QuestionResponseDto getQuestion(QuestionRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public QuestionResponseDto getQuestion(String token) {
+		Member member = memberService.getMember(token);
 		Long count = answerRepository.countByMember(member);
 
 		if (member.getLastQuestionDate() == null || !LocalDate.now().isEqual(member.getLastQuestionDate())) {
@@ -70,8 +69,8 @@ public class QuestionService {
 			.build());
 	}
 
-	public void reportQuestion(QuestionReportDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public void reportQuestion(String token, QuestionReportDto dto) {
+		Member member = memberService.getMember(token);
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setSubject("❗사각사각 질문 제보");
 		message.setTo("rawfish.go@gmail.com");
