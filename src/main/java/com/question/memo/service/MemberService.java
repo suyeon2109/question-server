@@ -158,7 +158,7 @@ public class MemberService {
 		member.editStickers(dto);
 	}
 
-	private Member getMember(String token) {
+	public Member getMember(String token) {
 		String memberSeq = (String)JwtUtil.verify(token.substring(7)).get("memberSeq");
 		return memberRepository.findById(Long.valueOf(AesUtil.decrypt(memberSeq))).orElseThrow(MemberNotFoundException::new);
 	}
