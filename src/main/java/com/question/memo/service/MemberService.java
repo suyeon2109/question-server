@@ -21,6 +21,8 @@ import com.question.memo.dto.member.MemberStickersEditDto;
 import com.question.memo.exception.DeviceNotMatchedException;
 import com.question.memo.exception.MemberNotFoundException;
 import com.question.memo.repository.member.MemberRepository;
+import com.question.memo.util.AesUtil;
+import com.question.memo.util.JwtUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -112,6 +114,10 @@ public class MemberService {
 		return getMemberResponseDto(member);
 	}
 
+	public MemberResponseDto memberInfo(String token) {
+		return getMemberResponseDto(getMember(token));
+	}
+
 	public MemberResponseDto getMemberInfo(MemberRequestDto dto) {
 		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
 		return getMemberResponseDto(member);
@@ -147,18 +153,23 @@ public class MemberService {
 		return member;
 	}
 
-	public void setStickers(MemberStickersEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public void setStickers(String token, MemberStickersEditDto dto) {
+		Member member = getMember(token);
 		member.editStickers(dto);
 	}
 
-	public void setAlarms(MemberAlarmsEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	private Member getMember(String token) {
+		String memberSeq = (String)JwtUtil.verify(token.substring(7)).get("memberSeq");
+		return memberRepository.findById(Long.valueOf(AesUtil.decrypt(memberSeq))).orElseThrow(MemberNotFoundException::new);
+	}
+
+	public void setAlarms(String token, MemberAlarmsEditDto dto) {
+		Member member = getMember(token);
 		member.editPushAlarm(dto);
 	}
 
-	public void setFirebaseTokens(MemberFirebaseTokenEditDto dto) {
-		Member member = getMemberInfo(dto.getMemberId(), dto.getCurrentFirebaseToken());
+	public void setFirebaseTokens(String token, MemberFirebaseTokenEditDto dto) {
+		Member member = getMember(token);
 		member.editFirebaseToken(dto.getNewFirebaseToken());
 	}
 
