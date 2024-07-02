@@ -35,12 +35,12 @@ public class JwtUtil {
      */
     private static final String secret = AesUtil.encrypt("jwtSecretWordsForTokenIssue");
 
-    public static String token(Member member, Optional<LocalDateTime> expired) {
+    public static String token(Long memberSeq, Optional<LocalDateTime> expired) {
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secret);
         SecretKey key = Keys.hmacShaKeyFor(apiKeySecretBytes);
 
         JwtBuilder builder = Jwts.builder()
-                .claim("memberSeq", AesUtil.encrypt(String.valueOf(member.getMemberSeq())))
+                .claim("memberSeq", AesUtil.encrypt(String.valueOf(memberSeq)))
                 .expiration(Timestamp.valueOf(LocalDateTime.now().plusHours(2)))
                 .signWith(key);
 

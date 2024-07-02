@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import com.google.api.Http;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.question.memo.dto.ErrorResponse;
 import com.question.memo.exception.AnswerNotFoundException;
@@ -17,6 +18,8 @@ import com.question.memo.exception.MissionNotFoundException;
 import com.question.memo.exception.QuestionNotFoundException;
 import com.question.memo.exception.QuestionNotRemainException;
 import com.question.memo.exception.SignUpRequiredException;
+
+import io.jsonwebtoken.JwtException;
 
 @ControllerAdvice
 public class ExceptionController extends RuntimeException {
@@ -157,6 +160,19 @@ public class ExceptionController extends RuntimeException {
     public ResponseEntity<ErrorResponse> deviceNotMatchedException(DeviceNotMatchedException ex, WebRequest request) {
         ErrorResponse response = ErrorResponse.builder()
             .code(ex.getStatusCode())
+            .message(ex.getMessage())
+            .description(request.getDescription(false))
+            .build();
+
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.OK);
+    }
+
+
+    @ExceptionHandler(JwtException.class)
+    // @ApiResponse(responseCode = "401", description ="JWT 이상")
+    public ResponseEntity<ErrorResponse> jwtException(JwtException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder()
+            .code(HttpStatus.UNAUTHORIZED.value())
             .message(ex.getMessage())
             .description(request.getDescription(false))
             .build();
