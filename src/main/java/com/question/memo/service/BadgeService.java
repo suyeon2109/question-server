@@ -13,9 +13,7 @@ import com.question.memo.domain.Member;
 import com.question.memo.domain.MemberCompletedMission;
 import com.question.memo.domain.MemberReceivedBadge;
 import com.question.memo.dto.badge.BadgeCreateDto;
-import com.question.memo.dto.badge.BadgeRequestDto;
 import com.question.memo.dto.badge.BadgeResponseDto;
-import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.exception.BadgeNotFoundException;
 import com.question.memo.exception.BadgeNotReceivedException;
 import com.question.memo.repository.badge.BadgeRepository;
@@ -42,8 +40,8 @@ public class BadgeService {
 	}
 
 	@Transactional(readOnly = true)
-	public BadgeResponseDto getBadgeInfo(Long badgeSeq, MemberRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public BadgeResponseDto getBadgeInfo(Long badgeSeq, String token) {
+		Member member = memberService.getMember(token);
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
 		MemberReceivedBadge memberReceivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge)
 			.orElseThrow(BadgeNotReceivedException::new);
@@ -58,8 +56,8 @@ public class BadgeService {
 			.build();
 	}
 
-	public void applyBadge(Long badgeSeq, MemberRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public void applyBadge(Long badgeSeq, String token) {
+		Member member = memberService.getMember(token);
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
 		Optional<MemberReceivedBadge> receivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge);
 		if (receivedBadge.isPresent()) {
@@ -70,8 +68,8 @@ public class BadgeService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<BadgeResponseDto> getBadgeList(BadgeRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public List<BadgeResponseDto> getBadgeList(String token) {
+		Member member = memberService.getMember(token);
 		List<BadgeResponseDto> badgeList = badgeRepository.getBadgeList(member.getMemberSeq());
 
 		return badgeList.stream()
@@ -79,8 +77,8 @@ public class BadgeService {
 			.collect(Collectors.toList());
 	}
 
-	public void receiveBadge(Long badgeSeq, MemberRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public void receiveBadge(Long badgeSeq, String token) {
+		Member member = memberService.getMember(token);
 		Badge badge = badgeRepository.findById(badgeSeq).orElseThrow(BadgeNotFoundException::new);
 		Optional<MemberReceivedBadge> receivedBadge = memberReceivedBadgeRepository.findByMemberAndBadge(member, badge);
 		List<MemberCompletedMission> missions = memberCompletedMissionRepository.findByMember(member);

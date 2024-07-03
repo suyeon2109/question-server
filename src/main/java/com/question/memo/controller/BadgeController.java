@@ -9,14 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.badge.BadgeCreateDto;
-import com.question.memo.dto.badge.BadgeRequestDto;
 import com.question.memo.dto.badge.BadgeResponseDto;
-import com.question.memo.dto.member.MemberRequestDto;
 import com.question.memo.service.BadgeService;
 
 import jakarta.validation.Valid;
@@ -29,11 +28,8 @@ public class BadgeController {
 	private final BadgeService badgeService;
 
 	@GetMapping
-	public CommonResponse<List<BadgeResponseDto>> getMissionList(@Valid BadgeRequestDto dto, BindingResult e) {
-		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		}
-		List<BadgeResponseDto> list = badgeService.getBadgeList(dto);
+	public CommonResponse<List<BadgeResponseDto>> getMissionList(@RequestHeader("Authorization") String token) {
+		List<BadgeResponseDto> list = badgeService.getBadgeList(token);
 
 		CommonResponse<List<BadgeResponseDto>> response = CommonResponse.<List<BadgeResponseDto>>builder()
 			.code(HttpStatus.OK.value())
@@ -44,11 +40,8 @@ public class BadgeController {
 	}
 
 	@GetMapping("/{badgeSeq}")
-	public CommonResponse<BadgeResponseDto> getBadgeInfo(@PathVariable Long badgeSeq, @Valid MemberRequestDto dto, BindingResult e) {
-		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		}
-		BadgeResponseDto badgeInfo = badgeService.getBadgeInfo(badgeSeq, dto);
+	public CommonResponse<BadgeResponseDto> getBadgeInfo(@PathVariable Long badgeSeq, @RequestHeader("Authorization") String token) {
+		BadgeResponseDto badgeInfo = badgeService.getBadgeInfo(badgeSeq, token);
 
 		CommonResponse<BadgeResponseDto> response = CommonResponse.<BadgeResponseDto>builder()
 			.code(HttpStatus.OK.value())
@@ -59,11 +52,8 @@ public class BadgeController {
 	}
 
 	@PostMapping("/{badgeSeq}")
-	public CommonResponse<BadgeResponseDto> receiveBadge(@PathVariable Long badgeSeq, @Valid @RequestBody MemberRequestDto dto, BindingResult e) {
-		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		}
-		badgeService.receiveBadge(badgeSeq, dto);
+	public CommonResponse<BadgeResponseDto> receiveBadge(@PathVariable Long badgeSeq, @RequestHeader("Authorization") String token) {
+		badgeService.receiveBadge(badgeSeq, token);
 
 		CommonResponse<BadgeResponseDto> response = CommonResponse.<BadgeResponseDto>builder()
 			.code(HttpStatus.OK.value())
@@ -87,11 +77,8 @@ public class BadgeController {
 	}
 
 	@PutMapping("/{badgeSeq}")
-	public CommonResponse<String> applyBadge(@PathVariable Long badgeSeq, @Valid @RequestBody MemberRequestDto dto, BindingResult e) {
-		if (e.hasErrors()) {
-			throw new IllegalArgumentException(e.getFieldErrors().get(0).getField() + " is null");
-		}
-		badgeService.applyBadge(badgeSeq, dto);
+	public CommonResponse<String> applyBadge(@PathVariable Long badgeSeq, @RequestHeader("Authorization") String token) {
+		badgeService.applyBadge(badgeSeq, token);
 
 		CommonResponse<String> response = CommonResponse.<String>builder()
 			.code(HttpStatus.OK.value())
