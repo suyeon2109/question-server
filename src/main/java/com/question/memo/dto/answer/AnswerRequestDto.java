@@ -1,15 +1,16 @@
 package com.question.memo.dto.answer;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnswerRequestDto {
-	private String memberId;
-	@NotNull
-	private String firebaseToken;
 	@NotNull
 	private Long questionSeq;
 	@NotNull

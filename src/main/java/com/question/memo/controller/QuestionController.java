@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.question.memo.dto.CommonResponse;
 import com.question.memo.dto.question.QuestionCreateDto;
 import com.question.memo.dto.question.QuestionReportDto;
-import com.question.memo.dto.question.QuestionRequestDto;
 import com.question.memo.dto.question.QuestionResponseDto;
 import com.question.memo.service.QuestionService;
 
