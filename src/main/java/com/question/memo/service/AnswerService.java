@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.question.memo.domain.Answer;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.Question;
-import com.question.memo.dto.answer.AnswerListRequestDto;
 import com.question.memo.dto.answer.AnswerRequestDto;
 import com.question.memo.dto.answer.AnswerResponseDto;
 import com.question.memo.exception.AnswerNotFoundException;
@@ -34,9 +33,8 @@ public class AnswerService {
 	private final MemberRepository memberRepository;
 	private final QuestionRepository questionRepository;
 	private final MemberService memberService;
-	public void saveAnswer(AnswerRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
-
+	public void saveAnswer(String token, AnswerRequestDto dto) {
+		Member member = memberService.getMember(token);
 		Question question = questionRepository.findById(dto.getQuestionSeq())
 			.orElseThrow(QuestionNotFoundException::new);
 
@@ -49,8 +47,8 @@ public class AnswerService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AnswerResponseDto> getAnswerList(AnswerListRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public List<AnswerResponseDto> getAnswerList(String token) {
+		Member member = memberService.getMember(token);
 		List<Answer> list = answerRepository.findByMember(member).orElseThrow(AnswerNotFoundException::new);
 
 		List<AnswerResponseDto> response = new ArrayList<>();
