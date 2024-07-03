@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.question.memo.domain.Member;
 import com.question.memo.domain.Mission;
 import com.question.memo.dto.mission.MissionCreateDto;
-import com.question.memo.dto.mission.MissionRequestDto;
 import com.question.memo.dto.mission.MissionResponseDto;
 import com.question.memo.repository.mission.MissionRepository;
 
@@ -22,8 +21,8 @@ public class MissionService {
 	private final MemberService memberService;
 
 	@Transactional(readOnly = true)
-	public List<MissionResponseDto> getMissionList(MissionRequestDto dto) {
-		Member member = memberService.getMemberInfo(dto.getMemberId(), dto.getFirebaseToken());
+	public List<MissionResponseDto> getMissionList(String token) {
+		Member member = memberService.getMember(token);
 		return missionRepository.getMissionList(member.getMemberSeq());
 	}
 
